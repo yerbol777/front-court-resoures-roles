@@ -27,7 +27,7 @@ module.exports = function () {
       {pattern: 'app/**/*+(ts|html|css)', load: false},
       {pattern: 'app/**/*.spec.ts', ignore: true},
 
-      {pattern: 'testing/**/*+(ts|html|css)', load: false},
+      {pattern: 'testing/**/*+(ts|html|css)', load: false}
     ],
 
     tests: [
