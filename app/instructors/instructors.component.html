@@ -1,0 +1,29 @@
+<div class="page-header">
+  <h1>Instructors</h1>
+</div>
+
+<button (click)="onAddInstructor()" type="button" class="btn btn-success">Add instructor</button>
+<br/><br/>
+<table class="table">
+  <thead>
+  <tr>
+    <th>NAME</th>
+    <th>ADDRESS</th>
+    <th>PHONE</th>
+    <th>EMAIL</th>
+    <th>ACTION</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let instructor of instructors">
+    <td class="vert-align">{{instructor.name}}</td>
+    <td class="vert-align">{{instructor.address}}</td>
+    <td class="vert-align">{{instructor.phone}}</td>
+    <td class="vert-align">{{instructor.email}}</td>
+    <td>
+      <button (click)="onEditInstructor(instructor)" type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span></button>
+      <button (click)="onDeleteInstructor(instructor)" type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span></button>
+    </td>
+  </tr>
+  </tbody>
+</table>

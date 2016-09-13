@@ -1,0 +1,67 @@
+<div class="page-header">
+  <h1>Instructors</h1>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <form [formGroup]="instructorForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="name">NAME</label>
+            <input
+              type="text"
+              id="name"
+              class="form-control"
+              formControlName="name">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="address">ADDRESS</label>
+            <input
+              type="text"
+              id="address"
+              class="form-control"
+              formControlName="address"
+              #imageUrl>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="phone">PHONE</label>
+            <input
+              type="text"
+              id="phone"
+              class="form-control"
+              formControlName="phone"
+              #imageUrl>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="email">EMAIL</label>
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              formControlName="email"
+              #imageUrl>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <button type="submit" class="btn btn-success" [disabled]="!instructorForm.valid">Save</button>
+          <a class="btn btn-danger" (click)="onCancel()">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
