@@ -1,0 +1,46 @@
+<div class="page-header">
+  <h1>Calendar</h1>
+</div>
+
+<p-tabView>
+  <p-tabPanel header="By Court">
+    <p-dropdown [options]="courts" [(ngModel)]="selectedCourt" (onChange)="onDropdownChange()"></p-dropdown>
+
+    <p-schedule [events]="fcEvents"
+                [header]="header"
+                defaultView="agendaWeek"
+                editable="true"
+                height="650"
+                minTime="07:00:00"
+                maxTime="22:00:00"
+                (onEventClick)="handleEventClick($event)"
+                (onDayClick)="handleDayClick($event)">
+
+    </p-schedule>
+    <p-dialog header="Event Details" [(visible)]="dialogVisible" [responsive]="true" showEffect="fade" [modal]="false">
+      <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4"><label for="title">Title</label></div>
+          <div class="ui-grid-col-8"><input pInputText id="title" [(ngModel)]="event.title" /></div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4"><label for="start">Start</label></div>
+          <div class="ui-grid-col-8"><p-calendar id="start" dateFormat="yy-mm-dd" [(ngModel)]="event.start"></p-calendar></div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4"><label for="end">End</label></div>
+          <div class="ui-grid-col-8"><p-calendar id="end" dateFormat="yy-mm-dd" [(ngModel)]="event.end" defaultDate="2016-01-01" placeholder="Optional"></p-calendar></div>
+        </div>
+      </div>
+      <footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+          <button type="button" (click)="deleteEvent()" label="Delete"><i class="fa fa-close"></i></button>
+          <button type="button" (click)="saveEvent()" label="Save"><i class="fa fa-check"></i></button>
+        </div>
+      </footer>
+    </p-dialog>
+  </p-tabPanel>
+  <p-tabPanel header="By Instructor">
+    Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows.
+  </p-tabPanel>
+</p-tabView>

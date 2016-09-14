@@ -24,6 +24,7 @@
       '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
 
       // other libraries
+      'primeng':                    'npm:primeng',
       'rxjs':                       'npm:rxjs',
       'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api',
 
@@ -39,6 +40,9 @@
       },
       'angular2-in-memory-web-api': {
         main: './index.js',
+        defaultExtension: 'js'
+      },
+      'primeng': {
         defaultExtension: 'js'
       }
     }

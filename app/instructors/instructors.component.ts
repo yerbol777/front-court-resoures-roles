@@ -22,7 +22,6 @@ export class InstructorsComponent implements OnInit {
     this.instructors = this.instructorsService.getInstructors();
     if (this.instructors.length === 0) {
       this.instructorsService.fetchInstructors();
-      console.log('fetch');
     }
   }
 
