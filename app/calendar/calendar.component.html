@@ -8,15 +8,18 @@
 
     <p-schedule [events]="fcEvents"
                 [header]="header"
+                [allDaySlot]="allDaySlot"
+                [locale]="locale"
                 defaultView="agendaWeek"
                 editable="true"
-                height="650"
                 minTime="07:00:00"
                 maxTime="22:00:00"
                 (onEventClick)="handleEventClick($event)"
-                (onDayClick)="handleDayClick($event)">
-
+                (onDayClick)="handleDayClick($event)"
+                (onEventDrop)="handleEventDrop($event)"
+                (onEventResize)="handleEventResize($event)">
     </p-schedule>
+
     <p-dialog header="Event Details" [(visible)]="dialogVisible" [responsive]="true" showEffect="fade" [modal]="false">
       <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
         <div class="ui-grid-row">
@@ -25,11 +28,11 @@
         </div>
         <div class="ui-grid-row">
           <div class="ui-grid-col-4"><label for="start">Start</label></div>
-          <div class="ui-grid-col-8"><p-calendar id="start" dateFormat="yy-mm-dd" [(ngModel)]="event.start"></p-calendar></div>
+          <div class="ui-grid-col-8"><p-calendar id="start" dateFormat="yy-mm-dd" timeFormat="HH:mm" timeControlType="select" [(ngModel)]="event.start"></p-calendar></div>
         </div>
         <div class="ui-grid-row">
           <div class="ui-grid-col-4"><label for="end">End</label></div>
-          <div class="ui-grid-col-8"><p-calendar id="end" dateFormat="yy-mm-dd" [(ngModel)]="event.end" defaultDate="2016-01-01" placeholder="Optional"></p-calendar></div>
+          <div class="ui-grid-col-8"><p-calendar id="end" dateFormat="yy-mm-dd" timeFormat="HH:mm" timeControlType="select" [(ngModel)]="event.end" defaultDate="2016-01-01" placeholder="Optional"></p-calendar></div>
         </div>
       </div>
       <footer>

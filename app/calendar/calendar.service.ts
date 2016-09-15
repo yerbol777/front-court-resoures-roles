@@ -1,4 +1,4 @@
-import {Http, Response} from "@angular/http";
+import {Http, Response, Headers} from "@angular/http";
 import {Injectable, EventEmitter} from "@angular/core";
 import { CalendarEvent } from "./event.class";
 
@@ -42,5 +42,53 @@ export class CalendarService {
           this.eventsUpdated.emit(this.events);
         }
       );
+  }
+
+  addEvent(event: CalendarEvent) {
+    const body = JSON.stringify(event);
+    const headers = new Headers({
+      'Content-Type' : 'application/json'
+    });
+    return this.http.post('http://localhost:3003/events', body, {headers: headers})
+      .map((response: Response) => response.json())
+      .subscribe((data) => {
+        event.id = data[0].id;
+        this.events.push(event);
+        this.eventsUpdated.emit(this.events);
+      });
+  }
+
+  editEvent(event: CalendarEvent) {
+    var index: number = -1;
+    for (var i = 0; i < this.events.length; i++) {
+      if (this.events[i].id === event.id) {
+        index = i;
+        break;
+      }
+    }
+    this.events[index] = event;
+
+    const body = JSON.stringify(event);
+    const headers = new Headers({
+      'Content-Type' : 'application/json'
+    });
+    return this.http.put('http://localhost:3003/events', body, {headers: headers})
+      .subscribe((res) => {
+        this.eventsUpdated.emit(this.events);
+      });
+  }
+
+  deleteEvent(event: CalendarEvent) {
+    var index: number = -1;
+    for (var i = 0; i < this.events.length; i++) {
+      if (this.events[i].id === event.id) {
+        index = i;
+        break;
+      }
+    }
+    this.events.splice(index, 1);
+    this.http.delete('http://localhost:3003/events/' + event.id).subscribe((res) => {
+      this.eventsUpdated.emit(this.events);
+    });
   }
 }

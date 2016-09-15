@@ -1,4 +1,4 @@
-import {Component, OnInit, ElementRef} from '@angular/core';
+import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import {SelectItem} from 'primeng/primeng';
 import {CalendarService} from "./calendar.service";
 import {CalendarEvent} from "./event.class";
@@ -14,75 +14,109 @@ export class CalendarComponent implements OnInit {
   events: CalendarEvent[] = [];
   fcEvents: any[] = [];
   header: any;
-  event: CalendarEvent;
+  event = {id: -1, start: '', end: '', title: '', instructor_id: -1, court_id: -1};
   dialogVisible: boolean = false;
   idGen: number = 100;
   courts: SelectItem[];
-  selectedCourt: SelectItem = {label: 'Court #1', value: {id:1, name:"Court #1", type:"grass"}};
+  selectedCourt: SelectItem;
+  allDaySlot:boolean;
+  locale: string;
 
-  constructor(private el: ElementRef, private calendarService: CalendarService) {
+  constructor(private cd: ChangeDetectorRef, private calendarService: CalendarService) {
     this.courts = [{label: 'Court #1', value: {id:1, name:"Court #1", type:"grass"}},
                    {label: 'Court #2', value: {id:2, name:"Court #2", type:"hard"}}];
+    this.selectedCourt = {label: 'Court #1', value: {id:1, name:"Court #1", type:"grass"}};
+    this.event.court_id =  this.selectedCourt.value.id;
   }
 
-  /*handleDayClick(event: any) {
-    this.event = new CalendarEvent();
-    this.event.start = event.date.format();
+  handleDayClick(event: any) {
+    var date = new Date(event.date.format());
+    this.event.start = event.date.format().substr(0,16);
+    var datePlusHour = new Date(date.setHours(date.getHours()+1));
+    this.event.end = datePlusHour.toISOString().substr(0,16);
+
     this.dialogVisible = true;
     //trigger detection manually as somehow only moving the mouse quickly after click triggers the automatic detection
     //this.cd.detectChanges();
-  }*/
-
-  onDropdownChange() {
-    console.log(this.selectedCourt.value);
-    console.log('111');
-    //this.calendarService.fetchEventsByCourtId(this.selectedCourt.value.id);
   }
 
-  /*handleEventClick(e: any) {
-    this.event = new CalEvent();
-    this.event.title = e.calEvent.title;
+  onDropdownChange() {
+    this.calendarService.fetchEventsByCourtId(this.selectedCourt.value.id);
+    this.event.court_id =  this.selectedCourt.value.id;
+  }
 
+  handleEventClick(e: any) {
+    this.event.title = e.calEvent.title;
     let start = e.calEvent.start;
     let end = e.calEvent.end;
-    if(e.view.name === 'month') {
-      start.stripTime();
-    }
-
-    if(end) {
-      end.stripTime();
-      this.event.end = end.format();
-    }
-
     this.event.id = e.calEvent.id;
-    this.event.start = start.format();
-    this.event.allDay = e.calEvent.allDay;
+    this.event.start = start.format().substr(0,16);
+    this.event.end = end.format().substr(0,16);
     this.dialogVisible = true;
-  }*/
+  }
 
-  /*saveEvent() {
+  handleEventDrop(e: any) {
+    this.event.title = e.event.title;
+    let start = e.event.start;
+    let end = e.event.end;
+    this.event.id = e.event.id;
+    this.event.start = start.format().substr(0,16);
+    this.event.end = end.format().substr(0,16);
+    this.saveEvent();
+  }
+
+  handleEventResize(e: any) {
+    console.log('event resize');
+    console.log(e.event.end);
+    console.log(e);
+    this.event.title = e.event.title;
+    let start = e.event.start;
+    let end = e.event.end;
+    this.event.id = e.event.id;
+    this.event.start = start.format().substr(0,16);
+    this.event.end = end.format().substr(0,16);
+    this.saveEvent();
+  }
+
+  saveEvent() {
+    var calEvent = new CalendarEvent(-1,
+      this.event.title,
+      '',
+      this.event.instructor_id,
+      '',
+      this.event.court_id,
+      this.event.start,
+      this.event.end);
     //update
-    if(this.event.id) {
-      let index: number = this.findEventIndexById(this.event.id);
-      if(index >= 0) {
-        this.events[index] = this.event;
-      }
+    if(this.event.id !== -1) {
+      calEvent.id = parseInt(this.event.id.toString());
+      this.calendarService.editEvent(calEvent);
+      this.clearEvent();
     }
     //new
     else {
-      this.event.id = this.idGen;
-      this.events.push(this.event);
-      this.event = null;
+      this.calendarService.addEvent(calEvent);
+      this.clearEvent();
     }
 
     this.dialogVisible = false;
   }
 
+  clearEvent() {
+    this.event = {id: -1, start: '', end: '', title: '', instructor_id: -1, court_id: this.selectedCourt.value.id};
+  }
+
   deleteEvent() {
-    let index: number = this.findEventIndexById(this.event.id);
-    if(index >= 0) {
-      this.events.splice(index, 1);
-    }
+    var calEvent = new CalendarEvent(this.event.id,
+      this.event.title,
+      '',
+      this.event.instructor_id,
+      '',
+      this.event.court_id,
+      this.event.start,
+      this.event.end);
+    this.clearEvent();
+    this.calendarService.deleteEvent(calEvent);
     this.dialogVisible = false;
   }
 
@@ -96,7 +130,7 @@ export class CalendarComponent implements OnInit {
     }
 
     return index;
-  }*/
+  }
 
   ngOnInit() {
     this.calendarService.eventsUpdated.subscribe(
@@ -106,8 +140,6 @@ export class CalendarComponent implements OnInit {
         for (var ev of this.events) {
           this.fcEvents.push(this.toFCEvent(ev));
         }
-        console.log(this.fcEvents);
-
       }
     );
     this.events = this.calendarService.getEvents();
@@ -120,8 +152,11 @@ export class CalendarComponent implements OnInit {
     this.header = {
       left   : 'prev,next today',
       center : 'title',
-      right  : 'agendaDay, agendaWeek'
+      right  : 'agendaDay, agendaWeek,'
     };
+
+    this.allDaySlot = false;
+    this.locale = 'ru';
   }
 
   toFCEvent(event: CalendarEvent) {
