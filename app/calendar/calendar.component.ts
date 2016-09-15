@@ -53,6 +53,7 @@ export class CalendarComponent implements OnInit {
     this.event.start = start.format().substr(0,16);
     this.event.end = end.format().substr(0,16);
     this.dialogVisible = true;
+    console.log(this.event.id);
   }
 
   handleEventDrop(e: any) {
@@ -107,7 +108,7 @@ export class CalendarComponent implements OnInit {
   }
 
   deleteEvent() {
-    var calEvent = new CalendarEvent(this.event.id,
+    var calEvent = new CalendarEvent(parseInt(this.event.id.toString()),
       this.event.title,
       '',
       this.event.instructor_id,
