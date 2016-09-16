@@ -2,6 +2,8 @@ import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import {SelectItem} from 'primeng/primeng';
 import {CalendarService} from "./calendar.service";
 import {CalendarEvent} from "./event.class";
+import {Court} from "../courts/court.class";
+import {Instructor} from "../instructors/instructor.class";
 declare var jQuery: any;
 
 @Component({
@@ -17,16 +19,15 @@ export class CalendarComponent implements OnInit {
   event = {id: -1, start: '', end: '', title: '', instructor_id: -1, court_id: -1};
   dialogVisible: boolean = false;
   idGen: number = 100;
-  courts: SelectItem[];
-  selectedCourt: SelectItem;
+  courts: SelectItem[] = [];
+  selectedCourt: Court;
+  instructors: SelectItem[];
+  selectedInstructor: Instructor;
   allDaySlot:boolean;
   locale: string;
 
   constructor(private cd: ChangeDetectorRef, private calendarService: CalendarService) {
-    this.courts = [{label: 'Court #1', value: {id:1, name:"Court #1", type:"grass"}},
-                   {label: 'Court #2', value: {id:2, name:"Court #2", type:"hard"}}];
-    this.selectedCourt = {label: 'Court #1', value: {id:1, name:"Court #1", type:"grass"}};
-    this.event.court_id =  this.selectedCourt.value.id;
+
   }
 
   handleDayClick(event: any) {
@@ -34,15 +35,27 @@ export class CalendarComponent implements OnInit {
     this.event.start = event.date.format().substr(0,16);
     var datePlusHour = new Date(date.setHours(date.getHours()+1));
     this.event.end = datePlusHour.toISOString().substr(0,16);
-
     this.dialogVisible = true;
     //trigger detection manually as somehow only moving the mouse quickly after click triggers the automatic detection
     //this.cd.detectChanges();
   }
 
-  onDropdownChange() {
-    this.calendarService.fetchEventsByCourtId(this.selectedCourt.value.id);
-    this.event.court_id =  this.selectedCourt.value.id;
+  onCourtsDropdownChange() {
+    this.event.court_id =  this.selectedCourt.id;
+    if (this.selectedInstructor.id === -1) {
+      this.calendarService.fetchEventsByCourtId(this.selectedCourt.id);
+    } else {
+      this.calendarService.fetchEventsByInstructorId(this.selectedInstructor.id, this.selectedCourt.id);
+    }
+  }
+
+  onInstructorsDropdownChange() {
+    this.event.instructor_id =  this.selectedInstructor.id;
+    if (this.selectedInstructor.id === -1) {
+      this.calendarService.fetchEventsByCourtId(this.selectedCourt.id);
+    } else {
+      this.calendarService.fetchEventsByInstructorId(this.selectedInstructor.id, this.selectedCourt.id);
+    }
   }
 
   handleEventClick(e: any) {
@@ -67,9 +80,6 @@ export class CalendarComponent implements OnInit {
   }
 
   handleEventResize(e: any) {
-    console.log('event resize');
-    console.log(e.event.end);
-    console.log(e);
     this.event.title = e.event.title;
     let start = e.event.start;
     let end = e.event.end;
@@ -104,7 +114,7 @@ export class CalendarComponent implements OnInit {
   }
 
   clearEvent() {
-    this.event = {id: -1, start: '', end: '', title: '', instructor_id: -1, court_id: this.selectedCourt.value.id};
+    this.event = {id: -1, start: '', end: '', title: '', instructor_id: -1, court_id: this.selectedCourt.id};
   }
 
   deleteEvent() {
@@ -134,6 +144,33 @@ export class CalendarComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.calendarService.courtsUpdated.subscribe(
+      (courts: Court[]) => {
+        this.courts = [];
+        for (var c of courts) {
+          this.courts.push({label: c.name, value: c});
+        }
+        this.selectedCourt = this.courts[0].value;
+
+        this.event.court_id =  this.selectedCourt.id;
+        this.events = this.calendarService.getEvents();
+        if (this.events.length === 0) {
+          this.calendarService.fetchEventsByCourtId(this.selectedCourt.id);
+        }
+      }
+    );
+
+    this.calendarService.instructorsUpdated.subscribe(
+      (instructors: Instructor[]) => {
+        this.instructors = [{label: 'By Instructor', value: new Instructor(-1, 'By Instructor', '','','')}];
+        for (var i of instructors) {
+          this.instructors.push({label: i.name, value: i});
+        }
+        this.selectedInstructor = this.instructors[0].value;
+        this.event.instructor_id =  this.selectedInstructor.id;
+      }
+    );
+
     this.calendarService.eventsUpdated.subscribe(
       (events: CalendarEvent[]) => {
         this.events = events;
@@ -143,12 +180,9 @@ export class CalendarComponent implements OnInit {
         }
       }
     );
-    this.events = this.calendarService.getEvents();
-    if (this.events.length === 0) {
-      this.calendarService.fetchEventsByCourtId(this.selectedCourt.value.id);
-    }
 
-
+    this.calendarService.fetchCourts();
+    this.calendarService.fetchInstructors();
 
     this.header = {
       left   : 'prev,next today',
