@@ -1,13 +1,42 @@
 import {Http, Response, Headers} from "@angular/http";
 import {Injectable, EventEmitter} from "@angular/core";
 import { CalendarEvent } from "./event.class";
+import {Court} from "../courts/court.class";
+import {Instructor} from "../instructors/instructor.class";
 
 @Injectable()
 export class CalendarService {
 
   events: CalendarEvent[] = [];
   eventsUpdated = new EventEmitter<CalendarEvent[]>();
+  courts: Court[];
+  courtsUpdated = new EventEmitter<Court[]>();
+  instructors: Instructor[];
+  instructorsUpdated = new EventEmitter<Instructor[]>();
+
   constructor(private http: Http) {}
+
+  fetchCourts() {
+    return this.http.get('http://localhost:3003/courts')
+      .map((response: Response) => response.json())
+      .subscribe(
+        (data: Court[]) => {
+          this.courts = data;
+          this.courtsUpdated.emit(this.courts);
+        }
+      );
+  }
+
+  fetchInstructors() {
+    return this.http.get('http://localhost:3003/instructors')
+      .map((response: Response) => response.json())
+      .subscribe(
+        (data: Instructor[]) => {
+          this.instructors = data;
+          this.instructorsUpdated.emit(this.instructors);
+        }
+      );
+  }
 
   getEvents() {
     return this.events;
@@ -33,8 +62,8 @@ export class CalendarService {
       );
   }
 
-  fetchEventsByInstructorId(instructorId: number) {
-    return this.http.get('http://localhost:3003/events?instructor_id=' + instructorId)
+  fetchEventsByInstructorId(instructorId: number, courtId: number) {
+    return this.http.get('http://localhost:3003/events?instructor_id=' + instructorId + '&court_id=' + courtId)
       .map((response: Response) => response.json())
       .subscribe(
         (data: CalendarEvent[]) => {
