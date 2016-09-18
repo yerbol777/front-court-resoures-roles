@@ -1,0 +1,36 @@
+<div class="page-header">
+  <h1>Courts</h1>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <form [formGroup]="courtForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="name">NAME</label>
+            <input
+              type="text"
+              id="name"
+              class="form-control"
+              formControlName="name">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="type">TYPE</label>
+            <p-dropdown [options]="courtTypes" [(ngModel)]="selectedCourtType"  [style]="{'width':'150px'}" id="type" formControlName="type"></p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <button type="submit" class="btn btn-success" [disabled]="!courtForm.valid">Save</button>
+          <a class="btn btn-danger" (click)="onCancel()">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
