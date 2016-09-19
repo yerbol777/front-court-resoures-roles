@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
     }*/
 
   }
-  onLogin(){
+  onSubmit(){
     this.loginService.login(this.loginForm.value);
   }
 }

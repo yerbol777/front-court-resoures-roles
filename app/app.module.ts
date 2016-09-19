@@ -29,6 +29,7 @@ import {CourtEditComponent} from "./courts/court-edit.component";
 import {CourtAddComponent} from "./courts/court-add.component";
 import {CourtsService} from "./courts/courts.service";
 import {AuthService} from "./login/auth.service";
+import {AuthGuardService} from "./auth-guard.service";
 
 
 @NgModule({
@@ -56,7 +57,7 @@ import {AuthService} from "./login/auth.service";
     CourtAddComponent,
     LoginComponent,
     LogoutComponent],
-  providers: [InstructorsService, CalendarService, CourtsService, AuthService],
+  providers: [InstructorsService, CalendarService, CourtsService, AuthService, AuthGuardService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

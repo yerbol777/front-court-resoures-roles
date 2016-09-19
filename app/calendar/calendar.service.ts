@@ -13,11 +13,15 @@ export class CalendarService {
   courtsUpdated = new EventEmitter<Court[]>();
   instructors: Instructor[];
   instructorsUpdated = new EventEmitter<Instructor[]>();
+  headers = new Headers({
+    'Content-Type': 'application/json',
+    'Authorization': localStorage.getItem('id_token')
+  });
 
   constructor(private http: Http) {}
 
   fetchCourts() {
-    return this.http.get('http://localhost:3003/courts')
+    return this.http.get('http://localhost:3003/courts', {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: Court[]) => {
@@ -28,7 +32,7 @@ export class CalendarService {
   }
 
   fetchInstructors() {
-    return this.http.get('http://localhost:3003/instructors')
+    return this.http.get('http://localhost:3003/instructors', {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: Instructor[]) => {
@@ -52,7 +56,7 @@ export class CalendarService {
   }
 
   fetchEventsByCourtId(courtId: number) {
-    return this.http.get('http://localhost:3003/events?court_id=' + courtId)
+    return this.http.get('http://localhost:3003/events?court_id=' + courtId, {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: CalendarEvent[]) => {
@@ -63,7 +67,7 @@ export class CalendarService {
   }
 
   fetchEventsByInstructorId(instructorId: number, courtId: number) {
-    return this.http.get('http://localhost:3003/events?instructor_id=' + instructorId + '&court_id=' + courtId)
+    return this.http.get('http://localhost:3003/events?instructor_id=' + instructorId + '&court_id=' + courtId, {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: CalendarEvent[]) => {
@@ -78,7 +82,7 @@ export class CalendarService {
     const headers = new Headers({
       'Content-Type' : 'application/json'
     });
-    return this.http.post('http://localhost:3003/events', body, {headers: headers})
+    return this.http.post('http://localhost:3003/events', body, {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe((data) => {
         event.id = data[0].id;
@@ -101,7 +105,7 @@ export class CalendarService {
     const headers = new Headers({
       'Content-Type' : 'application/json'
     });
-    return this.http.put('http://localhost:3003/events', body, {headers: headers})
+    return this.http.put('http://localhost:3003/events', body, {headers: this.headers})
       .subscribe((res) => {
         this.eventsUpdated.emit(this.events);
       });
@@ -116,7 +120,7 @@ export class CalendarService {
       }
     }
     this.events.splice(index, 1);
-    this.http.delete('http://localhost:3003/events/' + event.id).subscribe((res) => {
+    this.http.delete('http://localhost:3003/events/' + event.id, {headers: this.headers}).subscribe((res) => {
       this.eventsUpdated.emit(this.events);
     });
   }

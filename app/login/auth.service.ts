@@ -1,6 +1,6 @@
-import {Injectable, EventEmitter} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Login} from "./login.class";
-import {Http, Response, Headers} from "@angular/http";
+import {Http, Response} from "@angular/http";
 import {Router} from "@angular/router";
 import 'rxjs/Rx';
 
@@ -9,9 +9,15 @@ import 'rxjs/Rx';
 export class AuthService {
   //login: Login[] = [];
   //loginUpdated = new EventEmitter<Login[]>();
+  public isLoggedIn = false;
+  // store the URL so we can redirect after logging in
+  redirectUrl = '/';
 
   constructor(private http: Http,
               private router: Router) {
+    if(localStorage.getItem('id_token')!=null) {
+      this.isLoggedIn = true;
+    }
   }
 
   login(login: Login) {
@@ -20,9 +26,8 @@ export class AuthService {
     }).map((response: Response) => response.json())
       .subscribe((data) => {
           localStorage.setItem("id_token", data.token);
-          this.router.navigate(['/instructors']);
-          //sessionStorage.setItem("id_token", data.token);
-
+          this.isLoggedIn = true;
+          this.router.navigate([this.redirectUrl]);
         },
         error => {
           alert(error.text());
@@ -31,7 +36,6 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem("id_token");
-
+    this.isLoggedIn = false;
   }
-
 }

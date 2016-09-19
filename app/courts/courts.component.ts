@@ -30,7 +30,7 @@ export class CourtsComponent implements OnInit {
             this.courtsService.fetchCourts();
         }
 
-
+      this.courtsService.fetchCourtTypes();
     }
 
     onDeleteCourt(court: Court) {

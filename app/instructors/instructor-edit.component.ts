@@ -23,6 +23,9 @@ export class InstructorEditComponent implements OnInit, OnDestroy {
               private router: Router) {}
 
   ngOnInit() {
+    if (localStorage.getItem('id_token') == null) {
+      this.router.navigate(['/login']);
+    }
     this.subscription = this.route.params.subscribe(
       (params: any) => {
         if (params.hasOwnProperty('id')) {

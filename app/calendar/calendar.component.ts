@@ -31,6 +31,7 @@ export class CalendarComponent implements OnInit {
   }
 
   handleDayClick(event: any) {
+    this.event.title = '';
     var date = new Date(event.date.format());
     this.event.start = event.date.format().substr(0,16);
     var datePlusHour = new Date(date.setHours(date.getHours()+1));
@@ -66,7 +67,6 @@ export class CalendarComponent implements OnInit {
     this.event.start = start.format().substr(0,16);
     this.event.end = end.format().substr(0,16);
     this.dialogVisible = true;
-    console.log(this.event.id);
   }
 
   handleEventDrop(e: any) {
@@ -154,6 +154,10 @@ export class CalendarComponent implements OnInit {
 
         this.event.court_id =  this.selectedCourt.id;
         this.events = this.calendarService.getEvents();
+        this.fcEvents = [];
+        for (var ev of this.events) {
+          this.fcEvents.push(this.toFCEvent(ev));
+        }
         if (this.events.length === 0) {
           this.calendarService.fetchEventsByCourtId(this.selectedCourt.id);
         }

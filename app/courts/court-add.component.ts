@@ -1,54 +1,53 @@
-/**
- * Created by body on 9/15/16.
- */
 import {Component, OnInit} from '@angular/core';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {CourtsService} from "./courts.service";
 import {Court} from "./court.class";
-import {CourtTypes} from "./courtTypes.class";
 import {SelectItem} from "primeng/components/common/api";
+import {CourtType} from "./court-type.class";
 
 @Component({
-    moduleId: module.id,
-    selector: 'tsa-court-add',
-    templateUrl: 'court-add.component.html'
+  moduleId: module.id,
+  selector: 'tsa-court-add',
+  templateUrl: 'court-add.component.html'
 })
 
 export class CourtAddComponent implements OnInit {
-    courtForm: FormGroup;
-    court: Court;
-    courtTypes: SelectItem[] = [];
+  courtForm: FormGroup;
+  court: Court;
+  courtTypes: SelectItem[] = [];
+  selectedCourtType: CourtType;
 
-    constructor(public courtsService: CourtsService,
-                private router: Router,
-                private formBuilder: FormBuilder) {
-    }
+  constructor(public courtsService: CourtsService,
+              private router: Router,
+              private formBuilder: FormBuilder) {
+  }
 
-    ngOnInit() {
-        this.courtForm = this.formBuilder.group({
-            name: ['', Validators.required],
-            type: ['', Validators.required]
-        });
-        this.courtsService.fecthCourtTypes();
+  ngOnInit() {
+    this.courtForm = this.formBuilder.group({
+      name: ['', Validators.required],
+      court_type: ['', Validators.required]
+    });
 
-        this.courtsService.courtTypesUpdated.subscribe(
-            (courtTypes: Court[]) => {
-                this.courtTypes.push({label: "", value: null});
-                for (var c of courtTypes) {
-                    this.courtTypes.push({label: c.name, value: c.id});
-                }
-            }
-        )
-    }
+    this.courtsService.courtTypesUpdated.subscribe(
+      (courtTypes: Court[]) => {
+        for (var c of courtTypes) {
+          this.courtTypes.push({label: c.name, value: c});
+        }
+      }
+    );
 
-    onCancel() {
-        this.router.navigate(['/courts']);
-    }
+    this.courtsService.fetchCourtTypes();
+  }
 
-    onSubmit() {
-        this.courtsService.addCourt(this.courtForm.value);
-        this.router.navigate(['/courts']);
-    }
+  onCancel() {
+    this.router.navigate(['/courts']);
+  }
+
+  onSubmit() {
+    var court = new Court(-1, this.courtForm.value.name, this.selectedCourtType.name, this.selectedCourtType.id);
+    this.courtsService.addCourt(court);
+    this.router.navigate(['/courts']);
+  }
 }
 
