@@ -114,7 +114,7 @@ export class CalendarComponent implements OnInit {
   }
 
   clearEvent() {
-    this.event = {id: -1, start: '', end: '', title: '', instructor_id: -1, court_id: this.selectedCourt.id};
+    this.event = {id: -1, start: '', end: '', title: '', instructor_id: this.selectedInstructor.id, court_id: this.selectedCourt.id};
   }
 
   deleteEvent() {
