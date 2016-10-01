@@ -7,29 +7,34 @@
 <p-dropdown [options]="instructors" [style]="{'width':'250px'}" [(ngModel)]="selectedInstructor"
             (onChange)="onInstructorsDropdownChange()"></p-dropdown>
 
-<!--<p-tabView>
-
-  <p-tabPanel *ngFor="let co of courts" header="test1">
-    Court: 1
+<p-tabView (onChange)="onCourtsTabViewChange($event)">
+  <p-tabPanel header="Все корты">
+    <input type="hidden" name="withCourtIdHidden" value="-1">
   </p-tabPanel>
 
-</p-tabView> -->
+  <p-tabPanel *ngFor="let co of courts" [header]="co.label">
+    <input type="hidden" name="withCourtIdHidden" value="{{co.value.id}}">
+  </p-tabPanel>
+  <p-schedule [events]="fcEvents"
+              [header]="header"
+              [allDaySlot]="allDaySlot"
+              [locale]="locale"
+              defaultView="agendaWeek"
+              editable="true"
+              minTime="07:00:00"
+              maxTime="22:00:00"
+              (onEventClick)="handleEventClick($event)"
+              (onDayClick)="handleDayClick($event)"
+              (onEventDrop)="handleEventDrop($event)"
+              (onEventResize)="handleEventResize($event)">
+  </p-schedule>
 
-<p-schedule [events]="fcEvents"
-            [header]="header"
-            [allDaySlot]="allDaySlot"
-            [locale]="locale"
-            defaultView="agendaWeek"
-            editable="true"
-            minTime="07:00:00"
-            maxTime="22:00:00"
-            (onEventClick)="handleEventClick($event)"
-            (onDayClick)="handleDayClick($event)"
-            (onEventDrop)="handleEventDrop($event)"
-            (onEventResize)="handleEventResize($event)">
-</p-schedule>
 
-<p-dialog header="Event Details" [(visible)]="dialogVisible" [width]="450" [responsive]="true" showEffect="fade" [modal]="false">
+</p-tabView>
+
+
+<p-dialog header="Event Details" [(visible)]="dialogVisible" [width]="450" [responsive]="true" showEffect="fade"
+          [modal]="false">
   <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
     <div class="ui-grid-row">
       <div class="ui-grid-col-4"><label for="title">Title</label></div>
@@ -38,7 +43,8 @@
     <div class="ui-grid-row">
       <div class="ui-grid-col-4"><label for="title">Instructor</label></div>
       <div class="ui-grid-col-8">
-        <p-dropdown [options]="instructors" id="instructor" [style]="{'width':'250px'}" [(ngModel)]="withInstructor" (onChange)="onWithInstructorsDropdownChange()"></p-dropdown>
+        <p-dropdown [options]="instructors" id="instructor" [style]="{'width':'250px'}" [(ngModel)]="withInstructor"
+                    (onChange)="onWithInstructorsDropdownChange()"></p-dropdown>
       </div>
     </div>
     <div class="ui-grid-row">

@@ -51,8 +51,11 @@ export class CalendarComponent implements OnInit {
     }
   }
 
-  onCourtsTabViewChange() {
+  onCourtsTabViewChange(e) {
+    console.log("e.index: " + e.index);
+    this.selectedCourt.id = document.getElementsByName('withCourtIdHidden')[e.index].value;
     this.event.court_id = this.selectedCourt.id;
+    console.log(this.selectedCourt.id);
     if (this.selectedInstructor.id === -1) {
       this.calendarService.fetchEventsByCourtId(this.selectedCourt.id);
     } else {
@@ -173,7 +176,7 @@ export class CalendarComponent implements OnInit {
   ngOnInit() {
     this.calendarService.courtsUpdated.subscribe(
       (courts: Court[]) => {
-        this.courts = [{label: 'Все', value: new Court(-1, 'Все', '', -1)}];
+        //this.courts = [{label: 'Все', value: new Court(-1, 'Все', '', -1)}];
 
         for (var c of courts) {
           this.courts.push({label: c.name, value: c});
