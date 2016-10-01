@@ -7,9 +7,9 @@ import {Instructor} from "../instructors/instructor.class";
 declare var jQuery: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'tsa-calendar',
-    templateUrl: 'calendar.component.html'
+  moduleId: module.id,
+  selector: 'tsa-calendar',
+  templateUrl: 'calendar.component.html'
 })
 
 export class CalendarComponent implements OnInit {
@@ -23,7 +23,8 @@ export class CalendarComponent implements OnInit {
   selectedCourt: Court;
   instructors: SelectItem[];
   selectedInstructor: Instructor;
-  allDaySlot:boolean;
+  withInstructor: Instructor;
+  allDaySlot: boolean;
   locale: string;
 
   constructor(private cd: ChangeDetectorRef, private calendarService: CalendarService) {
@@ -33,16 +34,25 @@ export class CalendarComponent implements OnInit {
   handleDayClick(event: any) {
     this.event.title = '';
     var date = new Date(event.date.format());
-    this.event.start = event.date.format().substr(0,16);
-    var datePlusHour = new Date(date.setHours(date.getHours()+1));
-    this.event.end = datePlusHour.toISOString().substr(0,16);
+    this.event.start = event.date.format().substr(0, 16);
+    var datePlusHour = new Date(date.setHours(date.getHours() + 1));
+    this.event.end = datePlusHour.toISOString().substr(0, 16);
     this.dialogVisible = true;
     //trigger detection manually as somehow only moving the mouse quickly after click triggers the automatic detection
     //this.cd.detectChanges();
   }
 
   onCourtsDropdownChange() {
-    this.event.court_id =  this.selectedCourt.id;
+    this.event.court_id = this.selectedCourt.id;
+    if (this.selectedInstructor.id === -1) {
+      this.calendarService.fetchEventsByCourtId(this.selectedCourt.id);
+    } else {
+      this.calendarService.fetchEventsByInstructorId(this.selectedInstructor.id, this.selectedCourt.id);
+    }
+  }
+
+  onCourtsTabViewChange() {
+    this.event.court_id = this.selectedCourt.id;
     if (this.selectedInstructor.id === -1) {
       this.calendarService.fetchEventsByCourtId(this.selectedCourt.id);
     } else {
@@ -51,7 +61,16 @@ export class CalendarComponent implements OnInit {
   }
 
   onInstructorsDropdownChange() {
-    this.event.instructor_id =  this.selectedInstructor.id;
+    this.event.instructor_id = this.selectedInstructor.id;
+    if (this.selectedInstructor.id === -1) {
+      this.calendarService.fetchEventsByCourtId(this.selectedCourt.id);
+    } else {
+      this.calendarService.fetchEventsByInstructorId(this.selectedInstructor.id, this.selectedCourt.id);
+    }
+  }
+
+  onWithInstructorsDropdownChange() {
+    this.event.instructor_id = this.withInstructor.id;
     if (this.selectedInstructor.id === -1) {
       this.calendarService.fetchEventsByCourtId(this.selectedCourt.id);
     } else {
@@ -64,8 +83,8 @@ export class CalendarComponent implements OnInit {
     let start = e.calEvent.start;
     let end = e.calEvent.end;
     this.event.id = e.calEvent.id;
-    this.event.start = start.format().substr(0,16);
-    this.event.end = end.format().substr(0,16);
+    this.event.start = start.format().substr(0, 16);
+    this.event.end = end.format().substr(0, 16);
     this.dialogVisible = true;
   }
 
@@ -74,8 +93,8 @@ export class CalendarComponent implements OnInit {
     let start = e.event.start;
     let end = e.event.end;
     this.event.id = e.event.id;
-    this.event.start = start.format().substr(0,16);
-    this.event.end = end.format().substr(0,16);
+    this.event.start = start.format().substr(0, 16);
+    this.event.end = end.format().substr(0, 16);
     this.saveEvent();
   }
 
@@ -84,12 +103,13 @@ export class CalendarComponent implements OnInit {
     let start = e.event.start;
     let end = e.event.end;
     this.event.id = e.event.id;
-    this.event.start = start.format().substr(0,16);
-    this.event.end = end.format().substr(0,16);
+    this.event.start = start.format().substr(0, 16);
+    this.event.end = end.format().substr(0, 16);
     this.saveEvent();
   }
 
   saveEvent() {
+
     var calEvent = new CalendarEvent(-1,
       this.event.title,
       '',
@@ -99,7 +119,7 @@ export class CalendarComponent implements OnInit {
       this.event.start,
       this.event.end);
     //update
-    if(this.event.id !== -1) {
+    if (this.event.id !== -1) {
       calEvent.id = parseInt(this.event.id.toString());
       this.calendarService.editEvent(calEvent);
       this.clearEvent();
@@ -114,7 +134,14 @@ export class CalendarComponent implements OnInit {
   }
 
   clearEvent() {
-    this.event = {id: -1, start: '', end: '', title: '', instructor_id: this.selectedInstructor.id, court_id: this.selectedCourt.id};
+    this.event = {
+      id: -1,
+      start: '',
+      end: '',
+      title: '',
+      instructor_id: this.selectedInstructor.id,
+      court_id: this.selectedCourt.id
+    };
   }
 
   deleteEvent() {
@@ -133,8 +160,8 @@ export class CalendarComponent implements OnInit {
 
   findEventIndexById(id: number) {
     let index = -1;
-    for(let i = 0; i < this.events.length; i++) {
-      if(id == this.events[i].id) {
+    for (let i = 0; i < this.events.length; i++) {
+      if (id == this.events[i].id) {
         index = i;
         break;
       }
@@ -146,13 +173,15 @@ export class CalendarComponent implements OnInit {
   ngOnInit() {
     this.calendarService.courtsUpdated.subscribe(
       (courts: Court[]) => {
-        this.courts = [];
+        this.courts = [{label: 'Все', value: new Court(-1, 'Все', '', -1)}];
+
         for (var c of courts) {
           this.courts.push({label: c.name, value: c});
         }
-        this.selectedCourt = this.courts[0].value;
 
-        this.event.court_id =  this.selectedCourt.id;
+        this.selectedCourt = this.courts[1].value;
+
+        this.event.court_id = this.selectedCourt.id;
         this.events = this.calendarService.getEvents();
         this.fcEvents = [];
         for (var ev of this.events) {
@@ -162,16 +191,17 @@ export class CalendarComponent implements OnInit {
           this.calendarService.fetchEventsByCourtId(this.selectedCourt.id);
         }
       }
-    );
+    )
+    ;
 
     this.calendarService.instructorsUpdated.subscribe(
       (instructors: Instructor[]) => {
-        this.instructors = [{label: 'By Instructor', value: new Instructor(-1, 'By Instructor', '','','')}];
+        this.instructors = [{label: 'By Instructor', value: new Instructor(-1, 'By Instructor', '', '', '')}];
         for (var i of instructors) {
           this.instructors.push({label: i.name, value: i});
         }
         this.selectedInstructor = this.instructors[0].value;
-        this.event.instructor_id =  this.selectedInstructor.id;
+        this.event.instructor_id = this.selectedInstructor.id;
       }
     );
 
@@ -189,9 +219,9 @@ export class CalendarComponent implements OnInit {
     this.calendarService.fetchInstructors();
 
     this.header = {
-      left   : 'prev,next today',
-      center : 'title',
-      right  : 'agendaDay, agendaWeek,'
+      left: 'prev,next today',
+      center: 'title',
+      right: 'agendaDay, agendaWeek,'
     };
 
     this.allDaySlot = false;
@@ -199,10 +229,11 @@ export class CalendarComponent implements OnInit {
   }
 
   toFCEvent(event: CalendarEvent) {
-    return {"id": `${ event.id }`,
-            "title": `${ event.title }`,
-            "start": `${ event.start_datetime }`,
-            "end": `${event.end_datetime}`
+    return {
+      "id": `${ event.id }`,
+      "title": `${ event.title }`,
+      "start": `${ event.start_datetime }`,
+      "end": `${event.end_datetime}`
     };
   }
 }

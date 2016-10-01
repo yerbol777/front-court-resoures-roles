@@ -1,9 +1,19 @@
 <div class="page-header">
-  <h1>Calendar</h1>
+  <h1>Календарь</h1>
 </div>
 
-<p-dropdown [options]="courts" [style]="{'width':'150px'}" [(ngModel)]="selectedCourt" (onChange)="onCourtsDropdownChange()"></p-dropdown>
-<p-dropdown [options]="instructors" [style]="{'width':'250px'}" [(ngModel)]="selectedInstructor" (onChange)="onInstructorsDropdownChange()"></p-dropdown>
+<p-dropdown [options]="courts" [style]="{'width':'150px'}" [(ngModel)]="selectedCourt"
+            (onChange)="onCourtsDropdownChange()"></p-dropdown>
+<p-dropdown [options]="instructors" [style]="{'width':'250px'}" [(ngModel)]="selectedInstructor"
+            (onChange)="onInstructorsDropdownChange()"></p-dropdown>
+
+<!--<p-tabView>
+
+  <p-tabPanel *ngFor="let co of courts" header="test1">
+    Court: 1
+  </p-tabPanel>
+
+</p-tabView> -->
 
 <p-schedule [events]="fcEvents"
             [header]="header"
@@ -19,19 +29,31 @@
             (onEventResize)="handleEventResize($event)">
 </p-schedule>
 
-<p-dialog header="Event Details" [(visible)]="dialogVisible" [responsive]="true" showEffect="fade" [modal]="false">
+<p-dialog header="Event Details" [(visible)]="dialogVisible" [width]="450" [responsive]="true" showEffect="fade" [modal]="false">
   <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
     <div class="ui-grid-row">
       <div class="ui-grid-col-4"><label for="title">Title</label></div>
-      <div class="ui-grid-col-8"><input pInputText id="title" [(ngModel)]="event.title" /></div>
+      <div class="ui-grid-col-8"><input pInputText id="title" [(ngModel)]="event.title"/></div>
+    </div>
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-4"><label for="title">Instructor</label></div>
+      <div class="ui-grid-col-8">
+        <p-dropdown [options]="instructors" id="instructor" [style]="{'width':'250px'}" [(ngModel)]="withInstructor" (onChange)="onWithInstructorsDropdownChange()"></p-dropdown>
+      </div>
     </div>
     <div class="ui-grid-row">
       <div class="ui-grid-col-4"><label for="start">Start</label></div>
-      <div class="ui-grid-col-8"><p-calendar id="start" dateFormat="yy-mm-dd" timeFormat="HH:mm" timeControlType="select" [(ngModel)]="event.start"></p-calendar></div>
+      <div class="ui-grid-col-8">
+        <p-calendar id="start" dateFormat="yy-mm-dd" timeFormat="HH:mm" timeControlType="select"
+                    [(ngModel)]="event.start"></p-calendar>
+      </div>
     </div>
     <div class="ui-grid-row">
       <div class="ui-grid-col-4"><label for="end">End</label></div>
-      <div class="ui-grid-col-8"><p-calendar id="end" dateFormat="yy-mm-dd" timeFormat="HH:mm" timeControlType="select" [(ngModel)]="event.end" defaultDate="2016-01-01" placeholder="Optional"></p-calendar></div>
+      <div class="ui-grid-col-8">
+        <p-calendar id="end" dateFormat="yy-mm-dd" timeFormat="HH:mm" timeControlType="select" [(ngModel)]="event.end"
+                    defaultDate="2016-01-01" placeholder="Optional"></p-calendar>
+      </div>
     </div>
   </div>
   <footer>

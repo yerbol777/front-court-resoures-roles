@@ -1,5 +1,5 @@
 <div class="page-header">
-  <h1>Courts</h1>
+  <h1>Корты</h1>
 </div>
 
 <div class="row">
@@ -8,7 +8,7 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="form-group">
-            <label for="name">NAME</label>
+            <label for="name">Название</label>
             <input
               type="text"
               id="name"
@@ -20,15 +20,15 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="form-group">
-            <label for="court_type">TYPE</label>
+            <label for="court_type">Тип</label>
             <p-dropdown [options]="courtTypes" [(ngModel)]="selectedCourtType"  [style]="{'width':'150px'}" id="court_type" formControlName="court_type"></p-dropdown>
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-xs-12">
-          <button type="submit" class="btn btn-success" [disabled]="!courtForm.valid">Save</button>
-          <a class="btn btn-danger" (click)="onCancel()">Cancel</a>
+          <button type="submit" class="btn btn-success" [disabled]="!courtForm.valid">Сохранить</button>
+          <a class="btn btn-danger" (click)="onCancel()">Отмена</a>
         </div>
       </div>
     </form>

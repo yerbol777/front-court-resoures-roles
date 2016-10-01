@@ -7,11 +7,10 @@
     </style>
     <ul class="nav nav-pills pull-left">
 
-      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/calendar']"><a href="#">Calendar</a></li>
-      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/instructors']"><a href="#">Instructors</a></li>
-      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/courts']"><a href="#">Courts</a></li>
-      <!--<li [hidden]="getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/login']"><a href="#">Login</a></li>-->
-      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/logout']"><a href="#">Logout</a></li>
+      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/calendar']"><a href="#">Календарь</a></li>
+      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/instructors']"><a href="#">Инструкторы</a></li>
+      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/courts']"><a href="#">Корты</a></li>
+      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/logout']"><a href="#">Выход</a></li>
     </ul>
   </nav>
 </div>
