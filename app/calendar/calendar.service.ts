@@ -1,8 +1,9 @@
 import {Http, Response, Headers} from "@angular/http";
 import {Injectable, EventEmitter} from "@angular/core";
-import { CalendarEvent } from "./event.class";
+import {CalendarEvent} from "./event.class";
 import {Court} from "../courts/court.class";
 import {Instructor} from "../instructors/instructor.class";
+import appGlobals = require('../app.global'); //<==== config
 
 @Injectable()
 export class CalendarService {
@@ -18,10 +19,11 @@ export class CalendarService {
     'Authorization': localStorage.getItem('id_token')
   });
 
-  constructor(private http: Http) {}
+  constructor(private http: Http) {
+  }
 
   fetchCourts() {
-    return this.http.get('http://localhost:3003/courts', {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'courts', {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: Court[]) => {
@@ -32,7 +34,7 @@ export class CalendarService {
   }
 
   fetchInstructors() {
-    return this.http.get('http://localhost:3003/instructors', {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'instructors', {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: Instructor[]) => {
@@ -56,7 +58,7 @@ export class CalendarService {
   }
 
   fetchEventsByCourtId(courtId: number) {
-    return this.http.get('http://localhost:3003/events?court_id=' + courtId, {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'events?court_id=' + courtId, {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: CalendarEvent[]) => {
@@ -67,7 +69,7 @@ export class CalendarService {
   }
 
   fetchEventsByInstructorId(instructorId: number, courtId: number) {
-    return this.http.get('http://localhost:3003/events?instructor_id=' + instructorId + '&court_id=' + courtId, {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'events?instructor_id=' + instructorId + '&court_id=' + courtId, {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: CalendarEvent[]) => {
@@ -80,9 +82,9 @@ export class CalendarService {
   addEvent(event: CalendarEvent) {
     const body = JSON.stringify(event);
     const headers = new Headers({
-      'Content-Type' : 'application/json'
+      'Content-Type': 'application/json'
     });
-    return this.http.post('http://localhost:3003/events', body, {headers: this.headers})
+    return this.http.post(appGlobals.rest_server + 'events', body, {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe((data) => {
         event.id = data[0].id;
@@ -103,9 +105,9 @@ export class CalendarService {
 
     const body = JSON.stringify(event);
     const headers = new Headers({
-      'Content-Type' : 'application/json'
+      'Content-Type': 'application/json'
     });
-    return this.http.put('http://localhost:3003/events', body, {headers: this.headers})
+    return this.http.put(appGlobals.rest_server + 'events', body, {headers: this.headers})
       .subscribe((res) => {
         this.eventsUpdated.emit(this.events);
       });
@@ -120,7 +122,7 @@ export class CalendarService {
       }
     }
     this.events.splice(index, 1);
-    this.http.delete('http://localhost:3003/events/' + event.id, {headers: this.headers}).subscribe((res) => {
+    this.http.delete(appGlobals.rest_server + 'events/' + event.id, {headers: this.headers}).subscribe((res) => {
       this.eventsUpdated.emit(this.events);
     });
   }

@@ -2,6 +2,7 @@ import {Injectable, EventEmitter} from '@angular/core';
 import {Instructor} from "./instructor.class";
 import {Http, Response, Headers} from "@angular/http";
 import 'rxjs/Rx';
+import appGlobals = require('../app.global'); //<==== config
 
 @Injectable()
 export class InstructorsService {
@@ -32,21 +33,21 @@ export class InstructorsService {
     const id = instructor.id;
 
     this.instructors.splice(this.instructors.indexOf(instructor), 1);
-    this.http.delete('http://localhost:3003/instructors/' + id, {headers: this.headers}).subscribe((res) => {
+    this.http.delete(appGlobals.rest_server + 'instructors/' + id, {headers: this.headers}).subscribe((res) => {
     });
   }
 
   editInstructor(oldInstructor: Instructor, newInstructor: Instructor) {
     this.instructors[this.instructors.indexOf(oldInstructor)] = newInstructor;
     const body = JSON.stringify(newInstructor);
-    return this.http.put('http://localhost:3003/instructors', body, {headers: this.headers}).subscribe((res) => {
+    return this.http.put(appGlobals.rest_server + 'instructors', body, {headers: this.headers}).subscribe((res) => {
       this.instructorsUpdated.emit(this.instructors);
     });
   }
 
   addInstructor(instructor: Instructor) {
     const body = JSON.stringify(instructor);
-    return this.http.post('http://localhost:3003/instructors', body, {headers: this.headers})
+    return this.http.post(appGlobals.rest_server + 'instructors', body, {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe((data) => {
         instructor.id = data[0].id;
@@ -56,7 +57,7 @@ export class InstructorsService {
   }
 
   fetchInstructors() {
-    return this.http.get('http://localhost:3003/instructors', {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'instructors', {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: Instructor[]) => {

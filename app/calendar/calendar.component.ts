@@ -20,6 +20,7 @@ export class CalendarComponent implements OnInit {
   dialogVisible: boolean = false;
   idGen: number = 100;
   courts: SelectItem[] = [];
+  courts2: SelectItem[] = [];
   selectedCourt: Court;
   instructors: SelectItem[];
   selectedInstructor: Instructor;
@@ -52,8 +53,10 @@ export class CalendarComponent implements OnInit {
   }
 
   onCourtsTabViewChange(e) {
-    console.log("e.index: " + e.index);
-    this.selectedCourt.id = document.getElementsByName('withCourtIdHidden')[e.index].value;
+    var index = e.index;
+    console.log("e.index: " + index);
+    //this.selectedCourt.id = document.getElementsByName('withCourtIdHidden')[e.index].value;
+    this.selectedCourt.id = e.index;
     this.event.court_id = this.selectedCourt.id;
     console.log(this.selectedCourt.id);
     if (this.selectedInstructor.id === -1) {
@@ -176,13 +179,14 @@ export class CalendarComponent implements OnInit {
   ngOnInit() {
     this.calendarService.courtsUpdated.subscribe(
       (courts: Court[]) => {
-        //this.courts = [{label: 'Все', value: new Court(-1, 'Все', '', -1)}];
+        //this.courts = [{label: 'Все', value: new Court(-1, 'Все', '', 0)}];
 
         for (var c of courts) {
           this.courts.push({label: c.name, value: c});
         }
 
-        this.selectedCourt = this.courts[1].value;
+        this.courts2 = [{label: 'Все', value: new Court(0, 'Все', '', 0)}];
+        this.selectedCourt = this.courts2[0].value;
 
         this.event.court_id = this.selectedCourt.id;
         this.events = this.calendarService.getEvents();
@@ -199,7 +203,7 @@ export class CalendarComponent implements OnInit {
 
     this.calendarService.instructorsUpdated.subscribe(
       (instructors: Instructor[]) => {
-        this.instructors = [{label: 'By Instructor', value: new Instructor(-1, 'By Instructor', '', '', '')}];
+        this.instructors = [{label: 'Все Инструкторы', value: new Instructor(-1, 'By Instructor', '', '', '')}];
         for (var i of instructors) {
           this.instructors.push({label: i.name, value: i});
         }

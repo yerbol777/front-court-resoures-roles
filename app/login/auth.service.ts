@@ -3,6 +3,7 @@ import {Login} from "./login.class";
 import {Http, Response} from "@angular/http";
 import {Router} from "@angular/router";
 import 'rxjs/Rx';
+import appGlobals = require('../app.global'); //<==== config
 
 
 @Injectable()
@@ -21,7 +22,7 @@ export class AuthService {
   }
 
   login(login: Login) {
-    return this.http.post('http://localhost:3003/auth', {
+    return this.http.post(appGlobals.rest_server + 'auth', {
       login
     }).map((response: Response) => response.json())
       .subscribe((data) => {

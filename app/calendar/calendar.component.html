@@ -2,8 +2,8 @@
   <h1>Календарь</h1>
 </div>
 
-<p-dropdown [options]="courts" [style]="{'width':'150px'}" [(ngModel)]="selectedCourt"
-            (onChange)="onCourtsDropdownChange()"></p-dropdown>
+<!--<p-dropdown [options]="courts" [style]="{'width':'150px'}" [(ngModel)]="selectedCourt"
+            (onChange)="onCourtsDropdownChange()"></p-dropdown> -->
 <p-dropdown [options]="instructors" [style]="{'width':'250px'}" [(ngModel)]="selectedInstructor"
             (onChange)="onInstructorsDropdownChange()"></p-dropdown>
 
@@ -13,6 +13,7 @@
   </p-tabPanel>
 
   <p-tabPanel *ngFor="let co of courts" [header]="co.label">
+    <!--Court: {{co.value.id}}-->
     <input type="hidden" name="withCourtIdHidden" value="{{co.value.id}}">
   </p-tabPanel>
   <p-schedule [events]="fcEvents"
