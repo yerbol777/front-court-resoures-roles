@@ -57,7 +57,15 @@ export class CalendarComponent implements OnInit {
     var index = e.index;
     //console.log("e.index: " + index);
     //this.selectedCourtObj.id = e.index;
-    this.selectedCourtObj.id = document.getElementsByName('withCourtIdHidden')[e.index].value;
+    //let courtValue = document.getElementsByName("withCourtIdHidden") as HTMLDivElement;
+    //var courtValue: string = ( < HTMLScriptElement > document.getElementById("withCourtIdHidden")).text;
+    //this.selectedCourtObj.id = e.index;//parseInt(courtValue);
+    //this.selectedCourtObj.id = document.getElementsByName('withCourtIdHidden')[e.index].value;
+    var court = <HTMLInputElement>document.getElementsByName('withCourtIdHidden').item(e.index);
+    //var court = (<HTMLInputElement>document.getElementById('withCourtIdHidden')[e.index]).value;
+    console.log('court:' + court)
+    console.log('court.value:' + court.value)
+    this.selectedCourtObj.id = parseInt(court.value);
     this.event.court_id = this.selectedCourtObj.id;
     if (this.selectedInstructor.id === -1) {
       this.calendarService.fetchEventsByCourtId(this.selectedCourtObj.id, this.selectedCourtType);
