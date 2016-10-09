@@ -60,3 +60,6 @@ body > .container {
 code {
   font-size: 80%;
 }
+.page-header {
+  margin: 80px 0 20px;
+}
