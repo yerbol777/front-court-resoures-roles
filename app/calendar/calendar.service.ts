@@ -63,9 +63,9 @@ export class CalendarService {
     return this.events;
   }
 
-  getEventsByCourtId(courtId: number) {
+  getEventsByCourtId(tabCourtId: number) {
     for (var event of this.events) {
-      if (event.court_id === courtId) {
+      if (event.tab_court_id === tabCourtId) {
         return event;
       }
     }
@@ -102,10 +102,13 @@ export class CalendarService {
     return this.http.post(appGlobals.rest_server + 'events', body, {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe((data) => {
-        event.id = data[0].id;
-        this.events.push(event);
-        this.eventsUpdated.emit(this.events);
-      });
+          event.id = data[0].id;
+          this.events.push(event);
+          this.eventsUpdated.emit(this.events);
+        },
+        error => {
+          alert("Запись не может быть забронирован");
+        });
   }
 
   editEvent(event: CalendarEvent) {
@@ -117,15 +120,25 @@ export class CalendarService {
       }
     }
     this.events[index] = event;
-
     const body = JSON.stringify(event);
     const headers = new Headers({
       'Content-Type': 'application/json'
     });
     return this.http.put(appGlobals.rest_server + 'events', body, {headers: this.headers})
-      .subscribe((res) => {
-        this.eventsUpdated.emit(this.events);
-      });
+      .subscribe((data) => {
+          var res = JSON.stringify(data);
+          console.log('data:' + data);
+          if (res.indexOf("ERROR") != -1) {
+            alert("Запись не может быть забронирован");
+            this.eventsUpdated.unsubscribe();
+          }
+          else {
+            this.eventsUpdated.emit(this.events);
+          }
+        },
+        error => {
+          alert("Запись не может быть забронирован");
+        });
   }
 
   deleteEvent(event: CalendarEvent) {
