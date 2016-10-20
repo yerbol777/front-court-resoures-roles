@@ -27,7 +27,7 @@ export class CalendarService {
   }
 
   fetchCourts() {
-    return this.http.get(appGlobals.rest_server + 'courts', {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'courts?nocache=' + new Date().getTime(), {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: Court[]) => {
@@ -38,7 +38,7 @@ export class CalendarService {
   }
 
   fetchCourtsByCourtTypeId(courtTypeId: number) {
-    return this.http.get(appGlobals.rest_server + 'courts?court_type_id=' + courtTypeId, {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'courts?court_type_id=' + courtTypeId + '&nocache=' + new Date().getTime(), {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: Court[]) => {
@@ -49,7 +49,7 @@ export class CalendarService {
   }
 
   fetchInstructors() {
-    return this.http.get(appGlobals.rest_server + 'instructors', {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'instructors?nocache=' + new Date().getTime(), {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: Instructor[]) => {
@@ -73,7 +73,7 @@ export class CalendarService {
   }
 
   fetchEventsByCourtId(courtId: number, courtTypeId: number) {
-    return this.http.get(appGlobals.rest_server + 'events?court_id=' + courtId + '&court_type_id=' + courtTypeId, {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'events?court_id=' + courtId + '&court_type_id=' + courtTypeId + '&nocache=' + new Date().getTime(), {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: CalendarEvent[]) => {
@@ -84,7 +84,7 @@ export class CalendarService {
   }
 
   fetchEventsByInstructorId(instructorId: number, courtId: number, courtTypeId: number) {
-    return this.http.get(appGlobals.rest_server + 'events?instructor_id=' + instructorId + '&court_id=' + courtId + '&court_type_id=' + courtTypeId, {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'events?instructor_id=' + instructorId + '&court_id=' + courtId + '&court_type_id=' + courtTypeId + '&nocache=' + new Date().getTime(), {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: CalendarEvent[]) => {
@@ -99,7 +99,7 @@ export class CalendarService {
     const headers = new Headers({
       'Content-Type': 'application/json'
     });
-    return this.http.post(appGlobals.rest_server + 'events', body, {headers: this.headers})
+    return this.http.post(appGlobals.rest_server + 'events?nocache=' + new Date().getTime(), body, {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe((data) => {
           event.id = data[0].id;
@@ -124,7 +124,7 @@ export class CalendarService {
     const headers = new Headers({
       'Content-Type': 'application/json'
     });
-    return this.http.put(appGlobals.rest_server + 'events', body, {headers: this.headers})
+    return this.http.put(appGlobals.rest_server + 'events?nocache=' + new Date().getTime(), body, {headers: this.headers})
       .subscribe((data) => {
           var res = JSON.stringify(data);
           console.log('data:' + data);
@@ -156,7 +156,7 @@ export class CalendarService {
   }
 
   fetchCourtTypes() {
-    return this.http.get(appGlobals.rest_server + 'courtTypes', {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'courtTypes?nocache=' + new Date().getTime(), {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: CourtType[]) => {

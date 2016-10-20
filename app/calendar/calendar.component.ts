@@ -18,7 +18,7 @@ export class CalendarComponent implements OnInit {
   events: CalendarEvent[] = [];
   fcEvents: any[] = [];
   header: any;
-  event = {id: -1, start: '', end: '', title: '', instructor_id: -1, tab_court_id: 0, court_id: -1};
+  event = {id: -1, start: '', end: '', title: '', instructor_id: -1, tab_court_id: 0, court_id: -1, color: ''};
   dialogVisible: boolean = false;
   idGen: number = 100;
   courts: SelectItem[] = [];
@@ -34,25 +34,31 @@ export class CalendarComponent implements OnInit {
 
   constructor(private cd: ChangeDetectorRef, private calendarService: CalendarService, private formBuilder: FormBuilder) {
   }
-
+  // handle new Event
   handleDayClick(event: any) {
-    console.log('tab_court_id' + this.event.tab_court_id);
+    console.log(event);
     this.event.id = -1;
     this.event.title = '';
     var date = new Date(event.date.format());
     this.event.start = event.date.format().substr(0, 16).replace("T", " ");
     var datePlusHour = new Date(date.setHours(date.getHours() + 1));
     this.event.end = datePlusHour.toISOString().substr(0, 16).replace("T", " ");
-    if (event.tab_court_id == 0 || event.tab_court_id == -1 || typeof(event.tab_court_id) == 'undefined') {
-      this.event.court_id = -1;
+    if (this.event.tab_court_id == 0 || this.event.tab_court_id == -1 || typeof(this.event.tab_court_id) == 'undefined') {
+      this.event.court_id = this.courtsDialog[0].value;
     }
     else {
-      this.event.court_id = event.tab_court_id;
+      this.event.court_id = this.event.tab_court_id;
     }
-    console.log(this.courtsDialog);
 
+    let dateNow = new Date();
     this.event.instructor_id = event.instructor_id;
-    this.dialogVisible = true;
+    if (dateNow < date) {
+      this.dialogVisible = true;
+    }
+    else {
+      alert("Hе возможно добавить запись к старой дате");
+    }
+
     //trigger detection manually as somehow only moving the mouse quickly after click triggers the automatic detection
     //this.cd.detectChanges();
   }
@@ -70,6 +76,17 @@ export class CalendarComponent implements OnInit {
     var court = <HTMLInputElement>document.getElementsByName('withCourtIdHidden').item(e.index);
     this.selectedCourt.id = parseInt(court.value);
     this.event.tab_court_id = this.selectedCourt.id;
+
+    if (parseInt(court.value) != -1) {
+      this.courtsDialog = [({label: "Court " + court.value, value: court.value})];
+      this.event.court_id = parseInt(court.value);
+    }
+    else {
+
+      this.courtsDialog.push({label: '-Выберите корт-', value: -1});
+      this.courtsDialog = this.courts;
+    }
+
     if (this.selectedInstructor.id === -1) {
       this.calendarService.fetchEventsByCourtId(this.selectedCourt.id, this.selectedCourtType);
     } else {
@@ -93,6 +110,8 @@ export class CalendarComponent implements OnInit {
     // refresh events
     this.selectedCourt.id = 0; // show all by default after filter
     this.event.tab_court_id = this.selectedCourt.id;
+
+
     if (this.selectedInstructor.id === -1) {
       this.calendarService.fetchEventsByCourtId(this.selectedCourt.id, this.selectedCourtType);
     } else {
@@ -104,7 +123,7 @@ export class CalendarComponent implements OnInit {
     console.log('this.selectedInstructor.id' + this.instructorsDialog);
     this.event.instructor_id = this.selectedInstructor.id;
   }
-
+  // handle Edit Event Click
   handleEventClick(e: any) {
     this.event.title = e.calEvent.title;
     let start = e.calEvent.start;
@@ -113,8 +132,26 @@ export class CalendarComponent implements OnInit {
     this.event.start = start.format().substr(0, 16).replace("T", " ");
     this.event.end = end.format().substr(0, 16).replace("T", " ");
     this.event.court_id = e.calEvent.court_id;
-    this.event.instructor_id = e.calEvent.instructor_id;
-    this.dialogVisible = true;
+    /*if (e.calEvent.tab_court_id == 0 || e.calEvent.tab_court_id == -1 || typeof(e.calEvent.tab_court_id) == 'undefined') {
+      this.event.court_id = -1;
+    }
+    else {
+      this.event.court_id = e.calEvent.tab_court_id;
+    }*/
+    if(e.calEvent.instructor_id==null){
+      this.event.instructor_id=-1;
+    }
+    else {
+      this.event.instructor_id = e.calEvent.instructor_id;
+    }
+
+    let dateNow = new Date();
+    if (dateNow < start) {
+      this.dialogVisible = true;
+    }
+    else {
+      alert("Hе возможно редактировать запись старой даты");
+    }
   }
 
   handleEventDrop(e: any) {
@@ -134,7 +171,13 @@ export class CalendarComponent implements OnInit {
     this.event.id = e.event.id;
     this.event.start = start.format().substr(0, 16);
     this.event.end = end.format().substr(0, 16);
-    this.saveEvent();
+    let dateNow = new Date();
+    if (dateNow < start) {
+      this.saveEvent();
+    }
+    else {
+      alert("Hе возможно редактировать запись старой даты");
+    }
   }
 
   saveEvent() {
@@ -147,13 +190,15 @@ export class CalendarComponent implements OnInit {
       this.event.tab_court_id,
       this.event.start,
       this.event.end,
-      this.event.court_id);
+      this.event.court_id,
+      this.event.color
+    );
     //update
     if (this.event.id !== -1) {
       calEvent.id = parseInt(this.event.id.toString());
       calEvent.court_id = parseInt(this.event.court_id.toString());
-      calEvent.instructor_id = parseInt(this.event.instructor_id.toString()) == null ? -1 : parseInt(this.event.instructor_id.toString());
-      //calEvent.instructor_id = -1;
+      //calEvent.instructor_id = this.event.instructor_id == null ? -1 : parseInt(this.event.instructor_id.toString());
+      calEvent.instructor_id = -1;
       this.calendarService.editEvent(calEvent);
       this.clearEvent();
     }
@@ -173,8 +218,9 @@ export class CalendarComponent implements OnInit {
       end: '',
       title: '',
       instructor_id: this.event.instructor_id,
-      court_id: -1,
-      tab_court_id: this.event.tab_court_id
+      court_id: this.event.court_id,
+      tab_court_id: this.event.tab_court_id,
+      color: ''
     };
   }
 
@@ -187,7 +233,8 @@ export class CalendarComponent implements OnInit {
       this.event.tab_court_id,
       this.event.start,
       this.event.end,
-      this.event.court_id);
+      this.event.court_id,
+      this.event.color);
     this.clearEvent();
     this.calendarService.deleteEvent(calEvent);
     this.dialogVisible = false;
@@ -219,7 +266,7 @@ export class CalendarComponent implements OnInit {
     this.calendarService.courtsUpdated.subscribe(
       (courts: Court[]) => {
         //this.courts = [{label: 'Все', value: new Court(-1, 'Все', '', 0)}];
-        this.courtsDialog.push({label: '-Выберите корт-', value: -1});
+        this.courtsDialog = [];
         for (var c of courts) {
           this.courts.push({label: c.name, value: c.id});
           this.courtsDialog.push({label: c.name, value: c.id});
@@ -250,7 +297,7 @@ export class CalendarComponent implements OnInit {
     this.calendarService.instructorsUpdated.subscribe(
       (instructors: Instructor[]) => {
         this.instructors = [{label: 'Все Инструкторы', value: new Instructor(-1, 'By Instructor', '', '', '')}];
-        this.instructorsDialog = [{label: 'Без Инструктора', value: new Instructor(-1, 'Без Инструктора', '', '', '')}];
+        this.instructorsDialog = [{label: 'Без Инструктора', value: -1}];
         for (var i of instructors) {
           this.instructors.push({label: i.name, value: i});
           this.instructorsDialog.push({label: i.name, value: i.id});
@@ -292,7 +339,8 @@ export class CalendarComponent implements OnInit {
       "end": `${event.end_datetime}`,
       "tab_court_id": 0,
       "court_id": `${event.court_id}`,
-      "instructor_id": `${event.instructor_id}`
+      "instructor_id": `${event.instructor_id}`,
+      "color": `${event.color}`
     };
   }
 }

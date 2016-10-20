@@ -8,6 +8,7 @@ export class CalendarEvent {
               public tab_court_id: number,
               public start_datetime: string,
               public end_datetime: string,
-              public court_id: number) {
+              public court_id: number,
+              public color: string) {
   }
 }

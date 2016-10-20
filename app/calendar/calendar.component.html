@@ -63,14 +63,14 @@
         <div class="ui-grid-col-4"><label for="start">Начало</label></div>
         <div class="ui-grid-col-8">
           <p-calendar id="start" dateFormat="yy-mm-dd" timeFormat="HH:mm" timeControlType="select"
-                      [(ngModel)]="event.start" [locale]="locale" formControlName="start"></p-calendar>
+                      [(ngModel)]="event.start" [locale]="locale" formControlName="start" readonlyInput></p-calendar>
         </div>
       </div>
       <div class="ui-grid-row">
         <div class="ui-grid-col-4"><label for="end">Конец</label></div>
         <div class="ui-grid-col-8">
           <p-calendar id="end" dateFormat="yy-mm-dd" timeFormat="HH:mm" [(ngModel)]="event.end" timeControlType="select"
-                      defaultDate="01/01/2016" placeholder="Optional" [locale]="locale" formControlName="end"></p-calendar>
+                      defaultDate="01/01/2016" placeholder="Optional" readonlyInput [locale]="locale" formControlName="end"></p-calendar>
         </div>
       </div>
     </div>

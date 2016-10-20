@@ -40,14 +40,14 @@ export class InstructorsService {
   editInstructor(oldInstructor: Instructor, newInstructor: Instructor) {
     this.instructors[this.instructors.indexOf(oldInstructor)] = newInstructor;
     const body = JSON.stringify(newInstructor);
-    return this.http.put(appGlobals.rest_server + 'instructors', body, {headers: this.headers}).subscribe((res) => {
+    return this.http.put(appGlobals.rest_server + 'instructors?nocache=' + new Date().getTime(), body, {headers: this.headers}).subscribe((res) => {
       this.instructorsUpdated.emit(this.instructors);
     });
   }
 
   addInstructor(instructor: Instructor) {
     const body = JSON.stringify(instructor);
-    return this.http.post(appGlobals.rest_server + 'instructors', body, {headers: this.headers})
+    return this.http.post(appGlobals.rest_server + 'instructors?nocache' + new Date().getTime(), body, {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe((data) => {
         instructor.id = data[0].id;
@@ -57,7 +57,7 @@ export class InstructorsService {
   }
 
   fetchInstructors() {
-    return this.http.get(appGlobals.rest_server + 'instructors', {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'instructors?nocache=' + new Date().getTime(), {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: Instructor[]) => {

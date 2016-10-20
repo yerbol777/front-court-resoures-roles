@@ -1,5 +1,5 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { Court } from "./court.class";
+import {Injectable, EventEmitter} from '@angular/core';
+import {Court} from "./court.class";
 import {Http, Response, Headers} from "@angular/http";
 import 'rxjs/Rx';
 import {CourtType} from "./court-type.class";
@@ -12,11 +12,12 @@ export class CourtsService {
   courtsUpdated = new EventEmitter<Court[]>();
   courtTypesUpdated = new EventEmitter<CourtType[]>();
   headers = new Headers({
-  'Content-Type': 'application/json',
-  'Authorization': localStorage.getItem('id_token')
-});
+    'Content-Type': 'application/json',
+    'Authorization': localStorage.getItem('id_token')
+  });
 
-  constructor(private http: Http) {}
+  constructor(private http: Http) {
+  }
 
   getCourts() {
     return this.courts;
@@ -38,20 +39,21 @@ export class CourtsService {
   deleteCourt(court: Court) {
     const id = court.id;
     this.courts.splice(this.courts.indexOf(court), 1);
-    this.http.delete(appGlobals.rest_server + 'courts/' + id, {headers: this.headers}).subscribe((res) => {});
+    this.http.delete(appGlobals.rest_server + 'courts/' + id, {headers: this.headers}).subscribe((res) => {
+    });
   }
 
   editCourt(oldCourt: Court, newCourt: Court) {
     this.courts[this.courts.indexOf(oldCourt)] = newCourt;
     const body = JSON.stringify(newCourt);
-    return this.http.put(appGlobals.rest_server + 'courts', body, {headers: this.headers}).subscribe((res) => {
+    return this.http.put(appGlobals.rest_server + 'courts?nocache=' + new Date().getTime(), body, {headers: this.headers}).subscribe((res) => {
       this.courtsUpdated.emit(this.courts);
     });
   }
 
   addCourt(court: Court) {
     const body = JSON.stringify(court);
-    return this.http.post(appGlobals.rest_server + 'courts', body, {headers: this.headers})
+    return this.http.post(appGlobals.rest_server + 'courts?nocache=' + new Date().getTime(), body, {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe((data) => {
         court.id = data[0].id;
@@ -63,7 +65,7 @@ export class CourtsService {
   }
 
   fetchCourts() {
-    return this.http.get(appGlobals.rest_server + 'courts', {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'courts?nocache=' + new Date().getTime(), {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: Court[]) => {
@@ -73,14 +75,14 @@ export class CourtsService {
       );
   }
 
-  fetchCourtTypes(){
-    return this.http.get(appGlobals.rest_server + 'courtTypes', {headers: this.headers})
-        .map((response: Response) => response.json())
-        .subscribe(
-            (data: CourtType[]) => {
-              this.courtTypes = data;
-              this.courtTypesUpdated.emit(this.courtTypes);
-            }
-        );
+  fetchCourtTypes() {
+    return this.http.get(appGlobals.rest_server + 'courtTypes?nocache=' + new Date().getTime(), {headers: this.headers})
+      .map((response: Response) => response.json())
+      .subscribe(
+        (data: CourtType[]) => {
+          this.courtTypes = data;
+          this.courtTypesUpdated.emit(this.courtTypes);
+        }
+      );
   }
 }

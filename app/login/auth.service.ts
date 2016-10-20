@@ -16,13 +16,13 @@ export class AuthService {
 
   constructor(private http: Http,
               private router: Router) {
-    if(localStorage.getItem('id_token')!=null) {
+    if (localStorage.getItem('id_token') != null) {
       this.isLoggedIn = true;
     }
   }
 
   login(login: Login) {
-    return this.http.post(appGlobals.rest_server + 'auth', {
+    return this.http.post(appGlobals.rest_server + 'auth?nocache=' + new Date().getTime(), {
       login
     }).map((response: Response) => response.json())
       .subscribe((data) => {
