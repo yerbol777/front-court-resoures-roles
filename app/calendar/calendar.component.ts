@@ -197,8 +197,7 @@ export class CalendarComponent implements OnInit {
     if (this.event.id !== -1) {
       calEvent.id = parseInt(this.event.id.toString());
       calEvent.court_id = parseInt(this.event.court_id.toString());
-      //calEvent.instructor_id = this.event.instructor_id == null ? -1 : parseInt(this.event.instructor_id.toString());
-      calEvent.instructor_id = -1;
+      calEvent.instructor_id = this.event.instructor_id == null ? -1 : parseInt(this.event.instructor_id.toString());
       this.calendarService.editEvent(calEvent);
       this.clearEvent();
     }
