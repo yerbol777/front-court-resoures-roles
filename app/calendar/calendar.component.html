@@ -1,8 +1,6 @@
 <div class="page-header">
   <h1>Календарь</h1>
 </div>
-<!--<p-dropdown [options]="courts" [style]="{'width':'150px'}" [(ngModel)]="selectedCourt"
-            (onChange)="onCourtsDropdownChange()"></p-dropdown> -->
 <p-dropdown [options]="instructors" [style]="{'width':'250px'}" [(ngModel)]="selectedInstructor"
             (onChange)="onInstructorsDropdownChange()"></p-dropdown>
 <p-dropdown [options]="courtTypes" [style]="{'width':'150px'}" [(ngModel)]="selectedCourtType"
@@ -10,30 +8,33 @@
 <p-tabView (onChange)="onCourtsTabViewChange($event)">
   <p-tabPanel header="Все корты">
     <input type="hidden" name="withCourtIdHidden" value="-1">
+    <input type="hidden" name="withCourtNameHidden" value="-1">
   </p-tabPanel>
 
   <p-tabPanel *ngFor="let co of courts" [header]="co.label">
-    <!--Court: {{co.value}}-->
+    <!--Court: {{co.value}} / {{co.label}}-->
     <input type="hidden" name="withCourtIdHidden" value="{{co.value}}">
+    <input type="hidden" name="withCourtNameHidden" value="{{co.label}}">
   </p-tabPanel>
-  <!--<button type="button" id="submit" class="btn green uppercase">Prev</button> -->
-  <p-schedule [events]="fcEvents"
-              [header]="header"
-              [allDaySlot]="allDaySlot"
-              [locale]="locale"
-              defaultView="agendaWeek"
-              editable="true"
-              minTime="07:00:00"
-              maxTime="22:00:00"
-              (onEventClick)="handleEventClick($event)"
-              (onDayClick)="handleDayClick($event)"
-              (onEventDrop)="handleEventDrop($event)"
-              (onEventResize)="handleEventResize($event)">
-  </p-schedule>
 
+  <ds-scheduler
+    [editable]="false"
+    [events]="fcEvents"
+    [resources]="fcResources"
+    defaultView="agendaDay"
+    slotLabelFormat="HH:mm"
+    resourceAreaWidth="120"
+    resourceLabelText="&nbsp;"
+    titleFormat="YYYY-MM-DD dddd"
+    nowIndicator="true"
+    [allDaySlot]="false"
+    (onEventClick)="handleEventClick($event)"
+    (onDayClick)="handleDayClick($event)"
+    (onEventDrop)="handleEventDrop($event)"
+    (onEventResize)="handleEventResize($event)"
+  ></ds-scheduler>
 
 </p-tabView>
-
 
 <p-dialog header="Мероприятие" [(visible)]="dialogVisible" [width]="450" [responsive]="true" showEffect="fade"
           [modal]="false">
@@ -62,22 +63,21 @@
       <div class="ui-grid-row">
         <div class="ui-grid-col-4"><label for="start">Начало</label></div>
         <div class="ui-grid-col-8">
-          <p-calendar id="start" dateFormat="yy-mm-dd" timeFormat="HH:mm" timeControlType="select"
-                      [(ngModel)]="event.start" [locale]="locale" formControlName="start" readonlyInput></p-calendar>
+          <input id="start" [(ngModel)]="event.start" formControlName="start" readonlyInput/>
         </div>
       </div>
       <div class="ui-grid-row">
         <div class="ui-grid-col-4"><label for="end">Конец</label></div>
         <div class="ui-grid-col-8">
-          <p-calendar id="end" dateFormat="yy-mm-dd" timeFormat="HH:mm" [(ngModel)]="event.end" timeControlType="select"
-                      defaultDate="01/01/2016" placeholder="Optional" readonlyInput [locale]="locale" formControlName="end"></p-calendar>
+          <input id="end" [(ngModel)]="event.end" formControlName="end" readonlyInput/>
         </div>
       </div>
     </div>
     <footer>
       <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
         <div class="col-sm-6">
-          <button type="submit" [disabled]="!eventForm.valid" label="Save"><i class="fa fa-check" style="color: darkblue;">Сохранить</i>
+          <button type="submit" [disabled]="!eventForm.valid" label="Save"><i class="fa fa-check"
+                                                                              style="color: darkblue;">Сохранить</i>
           </button>
         </div>
         <div class="col-sm-6">

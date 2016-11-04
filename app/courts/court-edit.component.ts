@@ -74,7 +74,7 @@ export class CourtEditComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    var newCourt = new Court(this.courtForm.value.id, this.courtForm.value.name, this.selectedCourtType.name, this.selectedCourtType.id);
+    var newCourt = new Court(this.courtForm.value.id, this.courtForm.value.name, this.selectedCourtType.name, this.selectedCourtType.id, this.courtForm.value.name);
     this.courtsService.editCourt(this.court, newCourt);
     this.router.navigate(['/courts']);
   }

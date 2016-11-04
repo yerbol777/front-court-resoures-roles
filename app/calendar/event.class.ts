@@ -9,6 +9,13 @@ export class CalendarEvent {
               public start_datetime: string,
               public end_datetime: string,
               public court_id: number,
-              public color: string) {
+              public color: string,
+              public resourceId: number) {
+  }
+}
+export class EventResource {
+  constructor(public id: number,
+              public title: string){
+
   }
 }

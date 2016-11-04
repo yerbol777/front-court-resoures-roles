@@ -1,7 +1,7 @@
 import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import {SelectItem} from 'primeng/primeng';
 import {CalendarService} from "./calendar.service";
-import {CalendarEvent} from "./event.class";
+import {CalendarEvent, EventResource} from "./event.class";
 import {Court} from "../courts/court.class";
 import {Instructor} from "../instructors/instructor.class";
 import {CourtType} from "../courts/court-type.class";
@@ -16,9 +16,21 @@ import {FormGroup, Validators, FormBuilder, FormControl} from "@angular/forms";
 export class CalendarComponent implements OnInit {
   eventForm: FormGroup;
   events: CalendarEvent[] = [];
+  resources: any[] = [];
   fcEvents: any[] = [];
+  fcResources: any[] = [];
   header: any;
-  event = {id: -1, start: '', end: '', title: '', instructor_id: -1, tab_court_id: 0, court_id: -1, color: ''};
+  event = {
+    id: -1,
+    start: '',
+    end: '',
+    title: '',
+    instructor_id: -1,
+    tab_court_id: 0,
+    court_id: -1,
+    color: '',
+    resourceId: -1
+  };
   dialogVisible: boolean = false;
   idGen: number = 100;
   courts: SelectItem[] = [];
@@ -34,22 +46,17 @@ export class CalendarComponent implements OnInit {
 
   constructor(private cd: ChangeDetectorRef, private calendarService: CalendarService, private formBuilder: FormBuilder) {
   }
+
   // handle new Event
   handleDayClick(event: any) {
-    console.log(event);
     this.event.id = -1;
     this.event.title = '';
     var date = new Date(event.date.format());
     this.event.start = event.date.format().substr(0, 16).replace("T", " ");
-    var datePlusHour = new Date(date.setHours(date.getHours() + 1));
+    var datePlusHour = new Date(date.setMinutes(date.getMinutes() + 30));
     this.event.end = datePlusHour.toISOString().substr(0, 16).replace("T", " ");
-    if (this.event.tab_court_id == 0 || this.event.tab_court_id == -1 || typeof(this.event.tab_court_id) == 'undefined') {
-      this.event.court_id = this.courtsDialog[0].value;
-    }
-    else {
-      this.event.court_id = this.event.tab_court_id;
-    }
-
+    this.event.court_id = event.resourceObj.id;
+    this.event.resourceId = event.resourceObj.id;
     let dateNow = new Date();
     this.event.instructor_id = event.instructor_id;
     if (dateNow < date) {
@@ -73,18 +80,24 @@ export class CalendarComponent implements OnInit {
   }
 
   onCourtsTabViewChange(e) {
-    var court = <HTMLInputElement>document.getElementsByName('withCourtIdHidden').item(e.index);
-    this.selectedCourt.id = parseInt(court.value);
+    var courtId = <HTMLInputElement>document.getElementsByName('withCourtIdHidden').item(e.index);
+    var courtName = <HTMLInputElement>document.getElementsByName('withCourtNameHidden').item(e.index);
+    this.selectedCourt.id = parseInt(courtId.value);
     this.event.tab_court_id = this.selectedCourt.id;
 
-    if (parseInt(court.value) != -1) {
-      this.courtsDialog = [({label: "Court " + court.value, value: court.value})];
-      this.event.court_id = parseInt(court.value);
+    if (parseInt(courtId.value) != -1) {
+      this.courtsDialog = [({label: courtName.value, value: courtId.value})];
+      this.event.court_id = parseInt(courtId.value);
+      this.fcResources = [
+        {
+          id: courtId.value,
+          title: courtName.value
+        }];
     }
     else {
-
       this.courtsDialog.push({label: '-Выберите корт-', value: -1});
       this.courtsDialog = this.courts;
+      this.fcResources = this.resources;
     }
 
     if (this.selectedInstructor.id === -1) {
@@ -119,10 +132,6 @@ export class CalendarComponent implements OnInit {
     }
   }
 
-  onDialogInstructorsDropdownChange() {
-    console.log('this.selectedInstructor.id' + this.instructorsDialog);
-    this.event.instructor_id = this.selectedInstructor.id;
-  }
   // handle Edit Event Click
   handleEventClick(e: any) {
     this.event.title = e.calEvent.title;
@@ -130,16 +139,11 @@ export class CalendarComponent implements OnInit {
     let end = e.calEvent.end;
     this.event.id = e.calEvent.id;
     this.event.start = start.format().substr(0, 16).replace("T", " ");
-    this.event.end = end.format().substr(0, 16).replace("T", " ");
+    this.event.end = end != null ? end.format().substr(0, 16).replace("T", " ") : null;
     this.event.court_id = e.calEvent.court_id;
-    /*if (e.calEvent.tab_court_id == 0 || e.calEvent.tab_court_id == -1 || typeof(e.calEvent.tab_court_id) == 'undefined') {
-      this.event.court_id = -1;
-    }
-    else {
-      this.event.court_id = e.calEvent.tab_court_id;
-    }*/
-    if(e.calEvent.instructor_id==null){
-      this.event.instructor_id=-1;
+    this.event.resourceId = e.calEvent.resourceId;
+    if (e.calEvent.instructor_id == null) {
+      this.event.instructor_id = -1;
     }
     else {
       this.event.instructor_id = e.calEvent.instructor_id;
@@ -159,8 +163,10 @@ export class CalendarComponent implements OnInit {
     let start = e.event.start;
     let end = e.event.end;
     this.event.id = e.event.id;
-    this.event.start = start.format().substr(0, 16);
-    this.event.end = end.format().substr(0, 16);
+    this.event.start = start.format().substr(0, 16).replace("T", " ");
+    this.event.end = end.format().substr(0, 16).replace("T", " ");
+    this.event.court_id = e.event.court_id;
+    this.event.resourceId = e.event.resourceId;
     this.saveEvent();
   }
 
@@ -169,8 +175,10 @@ export class CalendarComponent implements OnInit {
     let start = e.event.start;
     let end = e.event.end;
     this.event.id = e.event.id;
-    this.event.start = start.format().substr(0, 16);
-    this.event.end = end.format().substr(0, 16);
+    this.event.court_id = e.event.court_id;
+    this.event.start = start.format().substr(0, 16).replace("T", " ");
+    this.event.end = end.format().substr(0, 16).replace("T", " ");
+    this.event.resourceId = e.event.resourceId;
     let dateNow = new Date();
     if (dateNow < start) {
       this.saveEvent();
@@ -191,7 +199,8 @@ export class CalendarComponent implements OnInit {
       this.event.start,
       this.event.end,
       this.event.court_id,
-      this.event.color
+      this.event.color,
+      this.event.resourceId
     );
     //update
     if (this.event.id !== -1) {
@@ -219,7 +228,8 @@ export class CalendarComponent implements OnInit {
       instructor_id: this.event.instructor_id,
       court_id: this.event.court_id,
       tab_court_id: this.event.tab_court_id,
-      color: ''
+      color: '',
+      resourceId: this.event.resourceId
     };
   }
 
@@ -233,7 +243,8 @@ export class CalendarComponent implements OnInit {
       this.event.start,
       this.event.end,
       this.event.court_id,
-      this.event.color);
+      this.event.color,
+      this.event.resourceId);
     this.clearEvent();
     this.calendarService.deleteEvent(calEvent);
     this.dialogVisible = false;
@@ -252,6 +263,7 @@ export class CalendarComponent implements OnInit {
   }
 
   ngOnInit() {
+
     const number = '^([0-9])';
     this.eventForm = this.formBuilder.group({
       title: ['', Validators.required],
@@ -264,13 +276,16 @@ export class CalendarComponent implements OnInit {
 
     this.calendarService.courtsUpdated.subscribe(
       (courts: Court[]) => {
-        //this.courts = [{label: 'Все', value: new Court(-1, 'Все', '', 0)}];
         this.courtsDialog = [];
+        this.resources = [];
+        this.fcResources = [];
         for (var c of courts) {
           this.courts.push({label: c.name, value: c.id});
+          this.fcResources.push(this.toFCResources(c));
+          this.resources.push(this.toFCResources(c));
           this.courtsDialog.push({label: c.name, value: c.id});
         }
-        this.selectedCourt = new Court(0, 'Все', '', 0);
+        this.selectedCourt = new Court(0, 'Все', '', 0, '');
 
         this.event.tab_court_id = this.selectedCourt.id;
         this.events = this.calendarService.getEvents();
@@ -286,7 +301,7 @@ export class CalendarComponent implements OnInit {
 
     this.calendarService.courtTypesUpdated.subscribe(
       (courtTypes: CourtType[])=> {
-        this.courtTypes = [{label: 'Все типы', value: new CourtType(0, 'Все Типы')}];
+        this.courtTypes = [{label: 'Все типы', value: 0}];
         for (var ct of courtTypes) {
           this.courtTypes.push({label: ct.name, value: ct.id});
         }
@@ -336,10 +351,17 @@ export class CalendarComponent implements OnInit {
       "title": `${ event.title }`,
       "start": `${ event.start_datetime }`,
       "end": `${event.end_datetime}`,
-      "tab_court_id": 0,
       "court_id": `${event.court_id}`,
       "instructor_id": `${event.instructor_id}`,
-      "color": `${event.color}`
+      "color": `${event.color}`,
+      "resourceId": `${event.resourceId}`
+    };
+  }
+
+  toFCResources(resource: EventResource) {
+    return {
+      "id": `${ resource.id }`,
+      "title": `${ resource.title }`
     };
   }
 }

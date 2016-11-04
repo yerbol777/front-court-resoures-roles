@@ -1,6 +1,6 @@
 import {Http, Response, Headers} from "@angular/http";
 import {Injectable, EventEmitter} from "@angular/core";
-import {CalendarEvent} from "./event.class";
+import {CalendarEvent, EventResource} from "./event.class";
 import {Court} from "../courts/court.class";
 import {Instructor} from "../instructors/instructor.class";
 import appGlobals = require('../app.global');
@@ -103,6 +103,7 @@ export class CalendarService {
       .map((response: Response) => response.json())
       .subscribe((data) => {
           event.id = data[0].id;
+          event.resourceId = data[0].resourceId;
           this.events.push(event);
           this.eventsUpdated.emit(this.events);
         },
@@ -127,12 +128,12 @@ export class CalendarService {
     return this.http.put(appGlobals.rest_server + 'events?nocache=' + new Date().getTime(), body, {headers: this.headers})
       .subscribe((data) => {
           var res = JSON.stringify(data);
-          console.log('data:' + data);
           if (res.indexOf("ERROR") != -1) {
             alert("Запись не может быть забронирован");
             this.eventsUpdated.unsubscribe();
           }
           else {
+            this.events[index].resourceId = data.json().resourceId;
             this.eventsUpdated.emit(this.events);
           }
         },

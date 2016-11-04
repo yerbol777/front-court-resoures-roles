@@ -45,7 +45,7 @@ export class CourtAddComponent implements OnInit {
   }
 
   onSubmit() {
-    var court = new Court(-1, this.courtForm.value.name, this.selectedCourtType.name, this.selectedCourtType.id);
+    var court = new Court(-1, this.courtForm.value.name, this.selectedCourtType.name, this.selectedCourtType.id, this.courtForm.value.name);
     this.courtsService.addCourt(court);
     this.router.navigate(['/courts']);
   }

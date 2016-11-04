@@ -15,10 +15,9 @@ import {InstructorAddComponent} from "./instructors/instructor-add.component";
 import {CalendarComponent} from "./calendar/calendar.component";
 import {LoginComponent} from "./login/login.component";
 import {LogoutComponent} from "./login/logout.component";
+import {SchedulerComponent} from "./calendar/scheduler.component";
 import {
-  ScheduleModule,
   DialogModule,
-  CalendarModule,
   ToggleButtonModule,
   DropdownModule,
   TabViewModule
@@ -38,9 +37,7 @@ import {AuthGuardService} from "./auth-guard.service";
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    ScheduleModule,
     DialogModule,
-    CalendarModule,
     ToggleButtonModule,
     TabViewModule,
     DropdownModule,
@@ -56,7 +53,8 @@ import {AuthGuardService} from "./auth-guard.service";
     CourtEditComponent,
     CourtAddComponent,
     LoginComponent,
-    LogoutComponent],
+    LogoutComponent,
+    SchedulerComponent],
   providers: [InstructorsService, CalendarService, CourtsService, AuthService, AuthGuardService],
   bootstrap: [AppComponent]
 })

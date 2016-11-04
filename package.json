@@ -5,7 +5,7 @@
   "scripts": {
     "start": "tsc && npm run tsc:w | npm run lite",
     "docker-build": "docker build -t ng2-quickstart .",
-    "docker": "npm run docker-build && docker run -it --rm -p 3000:3000 -p 3001:3001 ng2-quickstart",
+    "docker": "npm run docker-build && docker run -it --rm -p 7000:7000 -p 7001:7001 ng2-quickstart",
     "pree2e": "npm run webdriver:update",
     "e2e": "tsc && concurrently \"http-server -s\" \"protractor protractor.config.js\" --kill-others --success first",
     "lint": "tslint ./app/**/*.ts -t verbose",
@@ -41,7 +41,12 @@
     "rxjs": "5.0.0-beta.12",
     "systemjs": "0.19.27",
     "tsd": "^0.6.5",
-    "zone.js": "^0.6.23"
+    "zone.js": "^0.6.23",
+
+    "fullcalendar": "2.7.2",
+    "fullcalendar-scheduler": "1.3.1",
+    "jquery": "^2.2.3",
+    "moment": "2.13.0"
   },
   "devDependencies": {
     "concurrently": "^2.2.0",
