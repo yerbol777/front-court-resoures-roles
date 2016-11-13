@@ -55,7 +55,7 @@ export class CalendarComponent implements OnInit {
     this.event.title = '';
     var date = moment(event.date).format('YYYY-MM-DD HH:mm');
     this.event.start = event.date.format().substr(0, 16).replace("T", " ");
-    var datePlusHour = moment(event.date).add(30, 'minutes');
+    var datePlusHour = moment(event.date).add(60, 'minutes');
     this.event.end = datePlusHour.format('YYYY-MM-DD HH:mm');
     this.event.court_id = event.resourceObj.id;
     this.event.resourceId = event.resourceObj.id;
