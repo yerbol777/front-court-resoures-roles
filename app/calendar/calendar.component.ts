@@ -6,6 +6,8 @@ import {Court} from "../courts/court.class";
 import {Instructor} from "../instructors/instructor.class";
 import {CourtType} from "../courts/court-type.class";
 import {FormGroup, Validators, FormBuilder, FormControl} from "@angular/forms";
+///<reference path="typings/moment/moment.d.ts" />
+var moment = require('moment');
 
 @Component({
   moduleId: module.id,
@@ -51,13 +53,13 @@ export class CalendarComponent implements OnInit {
   handleDayClick(event: any) {
     this.event.id = -1;
     this.event.title = '';
-    var date = new Date(event.date.format());
+    var date = moment(event.date).format('YYYY-MM-DD HH:mm');
     this.event.start = event.date.format().substr(0, 16).replace("T", " ");
-    var datePlusHour = new Date(date.setMinutes(date.getMinutes() + 30));
-    this.event.end = datePlusHour.toISOString().substr(0, 16).replace("T", " ");
+    var datePlusHour = moment(event.date).add(30, 'minutes');
+    this.event.end = datePlusHour.format('YYYY-MM-DD HH:mm');
     this.event.court_id = event.resourceObj.id;
     this.event.resourceId = event.resourceObj.id;
-    let dateNow = new Date();
+    var dateNow = moment(new Date()).format('YYYY-MM-DD HH:mm');
     this.event.instructor_id = event.instructor_id;
     if (dateNow < date) {
       this.dialogVisible = true;
@@ -99,7 +101,6 @@ export class CalendarComponent implements OnInit {
       this.courtsDialog = this.courts;
       this.fcResources = this.resources;
     }
-
     if (this.selectedInstructor.id === -1) {
       this.calendarService.fetchEventsByCourtId(this.selectedCourt.id, this.selectedCourtType);
     } else {
@@ -135,6 +136,7 @@ export class CalendarComponent implements OnInit {
   // handle Edit Event Click
   handleEventClick(e: any) {
     this.event.title = e.calEvent.title;
+    let startDate = moment(e.calEvent.start).format('YYYY-MM-DD HH:mm');
     let start = e.calEvent.start;
     let end = e.calEvent.end;
     this.event.id = e.calEvent.id;
@@ -149,8 +151,8 @@ export class CalendarComponent implements OnInit {
       this.event.instructor_id = e.calEvent.instructor_id;
     }
 
-    let dateNow = new Date();
-    if (dateNow < start) {
+    let dateNow = moment(new Date()).format('YYYY-MM-DD HH:mm');
+    if (dateNow < startDate) {
       this.dialogVisible = true;
     }
     else {
@@ -179,7 +181,7 @@ export class CalendarComponent implements OnInit {
     this.event.start = start.format().substr(0, 16).replace("T", " ");
     this.event.end = end.format().substr(0, 16).replace("T", " ");
     this.event.resourceId = e.event.resourceId;
-    let dateNow = new Date();
+    let dateNow = new Date(moment.utc().utcOffset("+06:00"));
     if (dateNow < start) {
       this.saveEvent();
     }
@@ -202,21 +204,31 @@ export class CalendarComponent implements OnInit {
       this.event.color,
       this.event.resourceId
     );
-    //update
-    if (this.event.id !== -1) {
-      calEvent.id = parseInt(this.event.id.toString());
-      calEvent.court_id = parseInt(this.event.court_id.toString());
-      calEvent.instructor_id = this.event.instructor_id == null ? -1 : parseInt(this.event.instructor_id.toString());
-      this.calendarService.editEvent(calEvent);
-      this.clearEvent();
+    let dateNow = moment(new Date()).format('YYYY-MM-DD HH:mm');
+    var start = moment(this.event.start).format('YYYY-MM-DD HH:mm');
+
+    var end = moment(this.event.end).format('YYYY-MM-DD HH:mm');
+    if (end > start && dateNow < start) {
+      //update
+      if (this.event.id !== -1) {
+        calEvent.id = parseInt(this.event.id.toString());
+        calEvent.court_id = parseInt(this.event.court_id.toString());
+        calEvent.instructor_id = this.event.instructor_id == null ? -1 : parseInt(this.event.instructor_id.toString());
+        this.calendarService.editEvent(calEvent);
+        this.clearEvent();
+      }
+      //new
+      else {
+        this.calendarService.addEvent(calEvent);
+        this.clearEvent();
+      }
+      this.dialogVisible = false;
     }
-    //new
     else {
-      this.calendarService.addEvent(calEvent);
-      this.clearEvent();
+      alert('Hе возможно редактировать запись старой даты');
     }
 
-    this.dialogVisible = false;
+
   }
 
   clearEvent() {
@@ -299,6 +311,8 @@ export class CalendarComponent implements OnInit {
       }
     );
 
+
+
     this.calendarService.courtTypesUpdated.subscribe(
       (courtTypes: CourtType[])=> {
         this.courtTypes = [{label: 'Все типы', value: 0}];
@@ -320,6 +334,29 @@ export class CalendarComponent implements OnInit {
         this.event.instructor_id = this.selectedInstructor.id;
       }
     );
+
+    /*this.fcResources = [
+      {
+        id: '1',
+        title: 'Корт 1'
+      },
+      {
+        id: '2',
+        title: 'Корт 2'
+      },
+      {
+        id: '3',
+        title: 'Корт 3'
+      },
+      {
+        id: '4',
+        title: 'Корт 4'
+      },
+      {
+        id: '5',
+        title: 'Корт 5'
+      }
+    ];*/
 
     this.calendarService.eventsUpdated.subscribe(
       (events: CalendarEvent[]) => {
@@ -364,4 +401,6 @@ export class CalendarComponent implements OnInit {
       "title": `${ resource.title }`
     };
   }
+
+
 }

@@ -21,13 +21,12 @@
     [editable]="false"
     [events]="fcEvents"
     [resources]="fcResources"
+    locale="ru"
     defaultView="agendaDay"
     slotLabelFormat="HH:mm"
     resourceAreaWidth="120"
     resourceLabelText="&nbsp;"
     titleFormat="YYYY-MM-DD dddd"
-    nowIndicator="true"
-    [allDaySlot]="false"
     (onEventClick)="handleEventClick($event)"
     (onDayClick)="handleDayClick($event)"
     (onEventDrop)="handleEventDrop($event)"
@@ -51,6 +50,7 @@
         <div class="ui-grid-col-4"><label for="title">Текст</label></div>
         <div class="ui-grid-col-8">
           <input pInputText id="title" formControlName="title" required [(ngModel)]="event.title"/>
+          <div class="alert alert-danger" style="height: 50px;" *ngIf="!eventForm.controls['title'].valid">Введите текст</div>
         </div>
       </div>
       <div class="ui-grid-row">

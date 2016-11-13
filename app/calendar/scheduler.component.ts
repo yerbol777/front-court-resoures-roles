@@ -36,7 +36,7 @@ export class SchedulerComponent implements AfterViewInit, OnDestroy, DoCheck {
 
   @Input() hiddenDays: number[];
 
-  @Input() lang: string;
+  @Input() lang: string = 'ru';
 
   @Input() fixedWeekCount: boolean;
 
@@ -52,7 +52,7 @@ export class SchedulerComponent implements AfterViewInit, OnDestroy, DoCheck {
 
   @Input() eventLimit: any;
 
-  @Input() defaultDate: any;
+  @Input() defaultDate: any = new Date();
 
   @Input() editable: boolean = false;
 
@@ -62,7 +62,7 @@ export class SchedulerComponent implements AfterViewInit, OnDestroy, DoCheck {
 
   @Input() defaultView: string = 'agendaDay';
 
-  @Input() allDaySlot: boolean = true;
+  @Input() allDaySlot: boolean = false;
 
   @Input() slotDuration: any = '00:30:00';
 
@@ -74,7 +74,7 @@ export class SchedulerComponent implements AfterViewInit, OnDestroy, DoCheck {
 
   @Input() minTime: any = '07:00:00';
 
-  @Input() maxTime: any = '21:00:00';
+  @Input() maxTime: any = '22:00:00';
 
   @Input() slotEventOverlap: boolean = true;
 

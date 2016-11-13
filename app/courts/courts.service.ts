@@ -38,8 +38,26 @@ export class CourtsService {
 
   deleteCourt(court: Court) {
     const id = court.id;
-    this.courts.splice(this.courts.indexOf(court), 1);
-    this.http.delete(appGlobals.rest_server + 'courts/' + id, {headers: this.headers}).subscribe((res) => {
+    this.http.delete(appGlobals.rest_server + 'courts/' + id, {headers: this.headers}).subscribe((data) => {
+      var res = JSON.stringify(data);
+      var obj = JSON.parse(res);
+      if (obj._body != null && obj._body != undefined) {
+        if (obj._body == 'DONE') {
+          this.courts.splice(this.courts.indexOf(court), 1);
+          this.courtsUpdated.emit(this.courts);
+        }
+        else {
+          var _body = JSON.parse(obj._body);
+          if (_body != null && _body != undefined) {
+            if (_body.errno == '1451') {
+              alert("Невозможно удалить " + court.name + ", ограничение внешнего ключа. Необходимо удалить связанные данные.");
+            }
+            else {
+              alert("Произошла ошибка. Обратитесь к администратору");
+            }
+          }
+        }
+      }
     });
   }
 
@@ -59,8 +77,6 @@ export class CourtsService {
         court.id = data[0].id;
         this.courts.push(court);
         this.courtsUpdated.emit(this.courts);
-        console.log('court added');
-        console.log(this.courts);
       });
   }
 

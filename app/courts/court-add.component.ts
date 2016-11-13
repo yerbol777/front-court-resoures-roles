@@ -31,6 +31,7 @@ export class CourtAddComponent implements OnInit {
 
     this.courtsService.courtTypesUpdated.subscribe(
       (courtTypes: Court[]) => {
+        this.courtTypes.push({label: '-Выберите тип-', value: null});
         for (var c of courtTypes) {
           this.courtTypes.push({label: c.name, value: c});
         }

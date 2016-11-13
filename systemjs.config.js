@@ -24,10 +24,10 @@
       '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
 
       // other libraries
-      'primeng':                    'npm:primeng',
-      'rxjs':                       'npm:rxjs',
+      'primeng': 'npm:primeng',
+      'rxjs': 'npm:rxjs',
       'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api',
-
+      'moment': 'node_modules/moment'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
@@ -44,7 +44,8 @@
       },
       'primeng': {
         defaultExtension: 'js'
-      }
+      },
+      moment: { main: 'moment.js', defaultExtension: 'js' }
     }
   });
 })(this);

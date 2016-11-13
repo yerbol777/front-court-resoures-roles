@@ -35,17 +35,11 @@ export class CourtEditComponent implements OnInit, OnDestroy {
           this.court = this.courtsService.getCourtById(this.courtId);
 
           var courtTypes = this.courtsService.getCourtTypes();
-          console.log('court types');
-          console.log(courtTypes);
-
           for (var c of courtTypes) {
             this.courtTypes.push({label: c.name, value: c});
           }
-          console.log(this.courtTypes);
           for (var x of this.courtTypes) {
             if (x.value.id === this.court.type_id) {
-              console.log(x.value.id);
-              console.log(this.court.id);
               this.selectedCourtType = x.value;
               break;
             }

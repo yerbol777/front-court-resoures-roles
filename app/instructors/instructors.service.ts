@@ -31,9 +31,26 @@ export class InstructorsService {
 
   deleteInstructor(instructor: Instructor) {
     const id = instructor.id;
-
-    this.instructors.splice(this.instructors.indexOf(instructor), 1);
-    this.http.delete(appGlobals.rest_server + 'instructors/' + id, {headers: this.headers}).subscribe((res) => {
+    this.http.delete(appGlobals.rest_server + 'instructors/' + id, {headers: this.headers}).subscribe((data) => {
+      var res = JSON.stringify(data);
+      var obj = JSON.parse(res);
+      if (obj._body != null && obj._body != undefined) {
+        if (obj._body == 'DONE') {
+          this.instructors.splice(this.instructors.indexOf(instructor), 1);
+          this.instructorsUpdated.emit(this.instructors);
+        }
+        else {
+          var _body = JSON.parse(obj._body);
+          if (_body != null && _body != undefined) {
+            if (_body.errno == '1451') {
+              alert("Невозможно удалить " + instructor.name + ", ограничение внешнего ключа. Необходимо удалить связанные данные.");
+            }
+            else {
+              alert("Произошла ошибка. Обратитесь к администратору");
+            }
+          }
+        }
+      }
     });
   }
 
