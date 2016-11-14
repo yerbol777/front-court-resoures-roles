@@ -27,7 +27,7 @@ export class CalendarService {
   }
 
   fetchCourts() {
-    return this.http.get(appGlobals.rest_server + 'courts?nocache=' + new Date().getTime(), {headers: this.headers})
+    return this.http.get(appGlobals.rest_server + 'courts?court_type_id=0&nocache=' + new Date().getTime(), {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: Court[]) => {
@@ -77,8 +77,13 @@ export class CalendarService {
       .map((response: Response) => response.json())
       .subscribe(
         (data: CalendarEvent[]) => {
-          this.events = data;
-          this.eventsUpdated.emit(this.events);
+          if (data != null && data.length > 0) {
+            this.events = data;
+            this.eventsUpdated.emit(this.events);
+          }
+          else {
+            this.eventsUpdated.emit(this.events);
+          }
         }
       );
   }

@@ -17,10 +17,10 @@ var moment = require('moment');
 
 export class CalendarComponent implements OnInit {
   eventForm: FormGroup;
-  events: CalendarEvent[] = [];
-  resources: any[] = [];
-  fcEvents: any[] = [];
   fcResources: any[] = [];
+  resources: any[] = [];  // resources clone
+  events: CalendarEvent[];
+  fcEvents: any[] = [];
   header: any;
   event = {
     id: -1,
@@ -86,7 +86,8 @@ export class CalendarComponent implements OnInit {
     var courtName = <HTMLInputElement>document.getElementsByName('withCourtNameHidden').item(e.index);
     this.selectedCourt.id = parseInt(courtId.value);
     this.event.tab_court_id = this.selectedCourt.id;
-
+    console.log('courtId.value' + courtId.value);
+    console.log('courtName.value' + courtName.value);
     if (parseInt(courtId.value) != -1) {
       this.courtsDialog = [({label: courtName.value, value: courtId.value})];
       this.event.court_id = parseInt(courtId.value);
@@ -119,6 +120,8 @@ export class CalendarComponent implements OnInit {
 
   onCourtTypesDropdownChange() {
     this.courts = [];
+    this.fcResources = [];
+    this.resources = [];
     this.calendarService.fetchCourtsByCourtTypeId(this.selectedCourtType);
 
     // refresh events
@@ -126,10 +129,10 @@ export class CalendarComponent implements OnInit {
     this.event.tab_court_id = this.selectedCourt.id;
 
 
-    if (this.selectedInstructor.id === -1) {
-      this.calendarService.fetchEventsByCourtId(this.selectedCourt.id, this.selectedCourtType);
-    } else {
+    if (this.selectedInstructor.id !== -1) {
       this.calendarService.fetchEventsByInstructorId(this.selectedInstructor.id, this.selectedCourt.id, this.selectedCourtType);
+    } else {
+      //this.calendarService.fetchEventsByCourtId(this.selectedCourt.id, this.selectedCourtType);
     }
   }
 
@@ -276,7 +279,6 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit() {
 
-    const number = '^([0-9])';
     this.eventForm = this.formBuilder.group({
       title: ['', Validators.required],
       court: ['', Validators.required],
@@ -285,21 +287,26 @@ export class CalendarComponent implements OnInit {
       instructorDialog: []
     });
 
+    this.calendarService.fetchInstructors();
+    this.calendarService.fetchCourtTypes();
+    this.calendarService.fetchCourts();
 
     this.calendarService.courtsUpdated.subscribe(
       (courts: Court[]) => {
         this.courtsDialog = [];
         this.resources = [];
         this.fcResources = [];
+        this.fcEvents = [];
+
         for (var c of courts) {
           this.courts.push({label: c.name, value: c.id});
-          this.fcResources.push(this.toFCResources(c));
           this.resources.push(this.toFCResources(c));
+          this.fcResources.push(this.toFCResources(c));
           this.courtsDialog.push({label: c.name, value: c.id});
         }
         this.selectedCourt = new Court(0, 'Все', '', 0, '');
-
         this.event.tab_court_id = this.selectedCourt.id;
+        this.events = [];
         this.events = this.calendarService.getEvents();
         this.fcEvents = [];
         for (var ev of this.events) {
@@ -310,7 +317,6 @@ export class CalendarComponent implements OnInit {
         }
       }
     );
-
 
 
     this.calendarService.courtTypesUpdated.subscribe(
@@ -335,42 +341,19 @@ export class CalendarComponent implements OnInit {
       }
     );
 
-    /*this.fcResources = [
-      {
-        id: '1',
-        title: 'Корт 1'
-      },
-      {
-        id: '2',
-        title: 'Корт 2'
-      },
-      {
-        id: '3',
-        title: 'Корт 3'
-      },
-      {
-        id: '4',
-        title: 'Корт 4'
-      },
-      {
-        id: '5',
-        title: 'Корт 5'
-      }
-    ];*/
-
     this.calendarService.eventsUpdated.subscribe(
       (events: CalendarEvent[]) => {
         this.events = events;
         this.fcEvents = [];
-        for (var ev of this.events) {
-          this.fcEvents.push(this.toFCEvent(ev));
+        if (this.events != null && this.events.length > 0) {
+          for (var ev of this.events) {
+            this.fcEvents.push(this.toFCEvent(ev));
+          }
+        } else {
+          this.fcEvents.push(null);
         }
       }
     );
-
-    this.calendarService.fetchCourts();
-    this.calendarService.fetchInstructors();
-    this.calendarService.fetchCourtTypes();
 
     this.header = {
       left: 'prev,next today',
@@ -380,6 +363,13 @@ export class CalendarComponent implements OnInit {
 
     this.allDaySlot = false;
     this.locale = 'ru';
+  }
+
+  toFCResources(resource: EventResource) {
+    return {
+      "id": `${ resource.id }`,
+      "title": `${ resource.title }`
+    };
   }
 
   toFCEvent(event: CalendarEvent) {
@@ -394,13 +384,5 @@ export class CalendarComponent implements OnInit {
       "resourceId": `${event.resourceId}`
     };
   }
-
-  toFCResources(resource: EventResource) {
-    return {
-      "id": `${ resource.id }`,
-      "title": `${ resource.title }`
-    };
-  }
-
 
 }

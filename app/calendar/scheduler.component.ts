@@ -1,4 +1,14 @@
-import {Component, ElementRef, AfterViewInit, OnDestroy, DoCheck, Input, Output, EventEmitter, IterableDiffers} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  AfterViewInit,
+  OnDestroy,
+  DoCheck,
+  Input,
+  Output,
+  EventEmitter,
+  IterableDiffers
+} from '@angular/core';
 declare var jQuery: any;
 // привет
 @Component({
@@ -175,10 +185,15 @@ export class SchedulerComponent implements AfterViewInit, OnDestroy, DoCheck {
       eventOverlap: this.eventOverlap,
       eventConstraint: this.eventConstraint,
       events: (start, end, timezone, callback) => {
-        callback(this.events);
+        if (this.events != null && this.events.length > 0) {
+          if (this.events[0] != null) {
+            callback(this.events);
+          }
+        }
       },
       resources: (callback) => {
-           callback(this.resources);
+        callback(this.resources);
+        console.log('callback works' + this.resources);
       },
       dayClick: (date, jsEvent, view, resourceObj) => {
         this.onDayClick.emit({
@@ -285,8 +300,8 @@ export class SchedulerComponent implements AfterViewInit, OnDestroy, DoCheck {
   ngDoCheck() {
     let changes = this.differ.diff(this.events);
     if (changes) {
-      this.schedule.fullCalendar('refetchEvents');
       this.schedule.fullCalendar('refetchResources');
+      this.schedule.fullCalendar('refetchEvents');
     }
   }
 
