@@ -5,12 +5,16 @@
         display: none !important;
       }
     </style>
-    <ul class="nav nav-pills pull-left">
+    <!--<ul class="nav nav-pills pull-left">-->
 
-      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/calendar']"><a href="#">Календарь</a></li>
-      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/instructors']"><a href="#">Инструкторы</a></li>
-      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/courts']"><a href="#">Корты</a></li>
-      <li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/logout']"><a href="#">Выход</a></li>
-    </ul>
+      <!--&lt;!&ndash;<li [hidden]="!getToken() || getTokenRole()!='operator'" role="presentation" routerLinkActive="active" [routerLink]="['/calendar']"><a href="#">Календарь</a></li>&ndash;&gt;-->
+      <!--&lt;!&ndash;<li [hidden]="!getToken() || getTokenRole()!='instructor'" role="presentation" routerLinkActive="active" [routerLink]="['/calendar_instructor']"><a href="#">Календарь</a></li>&ndash;&gt;-->
+      <!--&lt;!&ndash;<li [hidden]="!getToken() || getTokenRole()!='operator'" role="presentation" routerLinkActive="active" [routerLink]="['/instructors']"><a href="#">Инструкторы</a></li>&ndash;&gt;-->
+      <!--&lt;!&ndash;<li [hidden]="!getToken() || getTokenRole()!='operator'" role="presentation" routerLinkActive="active" [routerLink]="['/courts']"><a href="#">Корты</a></li>&ndash;&gt;-->
+      <!--&lt;!&ndash;<li role="presentation" routerLinkActive="active" [routerLink]="['/courts']"><a href="#">Корты</a></li>&ndash;&gt;-->
+      <!--&lt;!&ndash;<li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/logout']"><a href="#">Выход</a></li>&ndash;&gt;-->
+      <!---->
+    <!--</ul>-->
+    <p-tabMenu [model]="menuItems"></p-tabMenu>
   </nav>
 </div>

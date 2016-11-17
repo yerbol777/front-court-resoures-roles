@@ -20,7 +20,8 @@ import {
   DialogModule,
   ToggleButtonModule,
   DropdownModule,
-  TabViewModule
+  TabViewModule,
+  TabMenuModule
 } from 'primeng/primeng';
 import {CalendarService} from "./calendar/calendar.service";
 import {CourtsComponent} from "./courts/courts.component";
@@ -29,6 +30,7 @@ import {CourtAddComponent} from "./courts/court-add.component";
 import {CourtsService} from "./courts/courts.service";
 import {AuthService} from "./login/auth.service";
 import {AuthGuardService} from "./auth-guard.service";
+import {MenuModule} from "primeng/components/menu/menu";
 
 
 @NgModule({
@@ -41,7 +43,9 @@ import {AuthGuardService} from "./auth-guard.service";
     ToggleButtonModule,
     TabViewModule,
     DropdownModule,
-    routing],
+    routing,
+    TabMenuModule,
+    MenuModule],
   declarations: [AppComponent,
     InstructorsComponent,
     FooterComponent,

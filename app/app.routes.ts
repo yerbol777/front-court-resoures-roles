@@ -12,17 +12,67 @@ import {LogoutComponent} from "./login/logout.component";
 import {AuthGuardService} from "./auth-guard.service";
 
 export const appRoutes = [
-  {path: '', redirectTo: '/calendar', pathMatch: 'full'},
-  {path: 'instructors', component: InstructorsComponent, canActivate: [AuthGuardService]},
-  {path: 'instructors/new', component: InstructorAddComponent, canActivate: [AuthGuardService]},
-  {path: 'instructors/:id/edit', component: InstructorEditComponent, canActivate: [AuthGuardService]},
-  {path: 'calendar', component: CalendarComponent, canActivate: [AuthGuardService]},
-  {path: 'courts', component: CourtsComponent, canActivate: [AuthGuardService]},
-  {path: 'courts/new', component: CourtAddComponent, canActivate: [AuthGuardService]},
-  {path: 'courts/:id/edit', component: CourtEditComponent, canActivate: [AuthGuardService]},
-  {path: 'login', component: LoginComponent },
-  {path: 'logout', component: LogoutComponent },
-
+  {
+    path: '',
+    redirectTo: '/calendar_instructor',
+    pathMatch: 'full'
+  },
+  {
+    path: 'instructors',
+    component: InstructorsComponent,
+    canActivate: [AuthGuardService],
+    data: {roles: ['operator']}
+  },
+  {
+    path: 'instructors/new',
+    component: InstructorAddComponent,
+    canActivate: [AuthGuardService],
+    data: {roles: ['operator']}
+  },
+  {
+    path: 'instructors/:id/edit',
+    component: InstructorEditComponent,
+    canActivate: [AuthGuardService],
+    data: {roles: ['operator']}
+  },
+  {
+    path: 'calendar',
+    component: CalendarComponent,
+    canActivate: [AuthGuardService],
+    data: {roles: ['operator']}
+  },
+  {
+    path: 'calendar_instructor',
+    component: CalendarComponent,
+    canActivate: [AuthGuardService],
+    data: {roles: ['operator']}
+  },
+  {
+    path: 'courts',
+    component: CourtsComponent,
+    canActivate: [AuthGuardService],
+    data: {roles: ['operator']}
+  },
+  {
+    path: 'courts/new',
+    component: CourtAddComponent,
+    canActivate: [AuthGuardService],
+    data: {roles: ['operator']}
+  },
+  {
+    path: 'courts/:id/edit',
+    component: CourtEditComponent,
+    canActivate: [AuthGuardService],
+    data: {roles: ['operator']}
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'logout',
+    component: LogoutComponent
+  },
 ];
 
 export const routing = RouterModule.forRoot(appRoutes);

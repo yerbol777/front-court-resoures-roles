@@ -5,7 +5,7 @@ import {CalendarEvent, EventResource} from "./event.class";
 import {Court} from "../courts/court.class";
 import {Instructor} from "../instructors/instructor.class";
 import {CourtType} from "../courts/court-type.class";
-import {FormGroup, Validators, FormBuilder, FormControl} from "@angular/forms";
+import {FormGroup, Validators, FormBuilder} from "@angular/forms";
 ///<reference path="typings/moment/moment.d.ts" />
 var moment = require('moment');
 
@@ -86,8 +86,6 @@ export class CalendarComponent implements OnInit {
     var courtName = <HTMLInputElement>document.getElementsByName('withCourtNameHidden').item(e.index);
     this.selectedCourt.id = parseInt(courtId.value);
     this.event.tab_court_id = this.selectedCourt.id;
-    console.log('courtId.value' + courtId.value);
-    console.log('courtName.value' + courtName.value);
     if (parseInt(courtId.value) != -1) {
       this.courtsDialog = [({label: courtName.value, value: courtId.value})];
       this.event.court_id = parseInt(courtId.value);

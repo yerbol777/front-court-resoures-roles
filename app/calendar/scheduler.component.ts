@@ -193,7 +193,6 @@ export class SchedulerComponent implements AfterViewInit, OnDestroy, DoCheck {
       },
       resources: (callback) => {
         callback(this.resources);
-        console.log('callback works' + this.resources);
       },
       dayClick: (date, jsEvent, view, resourceObj) => {
         this.onDayClick.emit({

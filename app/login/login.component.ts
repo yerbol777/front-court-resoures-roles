@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthService} from "./auth.service";
 import {Login} from "./login.class";
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import {FormGroup, Validators, FormBuilder, FormControl} from '@angular/forms';
 
 @Component({
   moduleId: module.id,
@@ -17,19 +17,26 @@ export class LoginComponent implements OnInit {
 
   constructor(public loginService: AuthService,
               private router: Router,
-              private formBuilder: FormBuilder) { }
+              private formBuilder: FormBuilder) {
+  }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
-/*    if(localStorage.getItem('id_token')!=null){
-      this.router.navigate(['/instructors']);
-    }*/
+    this.loginForm = new FormGroup({
+      username: new FormControl(),
+      password: new FormControl()
+    });
+
+    /*    if(localStorage.getItem('id_token')!=null){
+     this.router.navigate(['/instructors']);
+     }*/
 
   }
-  onSubmit(){
+
+  onSubmit() {
     this.loginService.login(this.loginForm.value);
   }
 }

@@ -11,6 +11,7 @@ export class AuthService {
   //login: Login[] = [];
   //loginUpdated = new EventEmitter<Login[]>();
   public isLoggedIn = false;
+  public Role = null;
   // store the URL so we can redirect after logging in
   redirectUrl = '/';
 
@@ -28,6 +29,7 @@ export class AuthService {
       .subscribe((data) => {
           localStorage.setItem("id_token", data.token);
           this.isLoggedIn = true;
+          this.Role = 'operator';
           this.router.navigate([this.redirectUrl]);
         },
         error => {
