@@ -14,16 +14,15 @@ export class NavbarComponent implements OnInit {
   private menuItems: MenuItem[];
 
   constructor(public authService: AuthService) {
-    this.menuItems = [
-      {label: 'Календарь', routerLink: ['/calendar']},
-      {label: 'Инструкторы', routerLink: ['/instructors']},
-      {label: 'Корты', routerLink: ['/courts']},
-      {label: 'Выход', routerLink: ['/logout']},
-    ];
+
   }
 
   ngOnInit() {
-    //this.login.token = 'test';
+    this.authService.menuUpdated.subscribe(
+      (menus: MenuItem[])=> {
+        this.menuItems = menus;
+      }
+    );
   }
 
   getToken() {
@@ -31,7 +30,7 @@ export class NavbarComponent implements OnInit {
   }
 
   getTokenRole() {
-    return "instructor";
+    return localStorage.getItem('role_code');
   }
 
 }
