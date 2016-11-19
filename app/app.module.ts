@@ -13,6 +13,7 @@ import {NavbarComponent} from "./core/navbar.component";
 import {InstructorEditComponent} from "./instructors/instructor-edit.component";
 import {InstructorAddComponent} from "./instructors/instructor-add.component";
 import {CalendarComponent} from "./calendar/calendar.component";
+import {CalendarInstructorComponent} from "./calendar/calendar_instructor.component";
 import {LoginComponent} from "./login/login.component";
 import {LogoutComponent} from "./login/logout.component";
 import {SchedulerComponent} from "./calendar/scheduler.component";
@@ -24,6 +25,7 @@ import {
   TabMenuModule
 } from 'primeng/primeng';
 import {CalendarService} from "./calendar/calendar.service";
+import {CalendarInstructorService} from "./calendar/calendar_instructor.service";
 import {CourtsComponent} from "./courts/courts.component";
 import {CourtEditComponent} from "./courts/court-edit.component";
 import {CourtAddComponent} from "./courts/court-add.component";
@@ -53,13 +55,20 @@ import {MenuModule} from "primeng/components/menu/menu";
     InstructorEditComponent,
     InstructorAddComponent,
     CalendarComponent,
+    CalendarInstructorComponent,
     CourtsComponent,
     CourtEditComponent,
     CourtAddComponent,
     LoginComponent,
     LogoutComponent,
     SchedulerComponent],
-  providers: [InstructorsService, CalendarService, CourtsService, AuthService, AuthGuardService],
+  providers: [
+    InstructorsService,
+    CalendarService,
+    CalendarInstructorService,
+    CourtsService,
+    AuthService,
+    AuthGuardService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

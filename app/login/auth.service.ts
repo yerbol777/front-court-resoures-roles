@@ -16,6 +16,7 @@ export class AuthService {
   // store the URL so we can redirect after logging in
   redirectUrl = '/';
   public menuItems: MenuItem[];
+  public activeItem: MenuItem;
   menuUpdated = new EventEmitter<MenuItem[]>();
 
   constructor(private http: Http,
@@ -32,19 +33,9 @@ export class AuthService {
       .subscribe((data) => {
           localStorage.setItem("id_token", data.token);
           localStorage.setItem("role_code", data.role_code);
-          if (localStorage.getItem("role_code") == 'operator') {
-            this.menuItems = [
-              {label: 'Календарь', routerLink: ['/calendar']},
-              {label: 'Инструкторы', routerLink: ['/instructors']},
-              {label: 'Корты', routerLink: ['/courts']},
-              {label: 'Выход', routerLink: ['/logout']},
-            ];
-          } else if (localStorage.getItem("role_code") == 'instructor') {
-            this.menuItems = [
-              {label: 'Календарь', routerLink: ['/calendar']},
-              {label: 'Выход', routerLink: ['/logout']},
-            ];
-          }
+          localStorage.setItem("instructor_id", data.instructor_id);
+          localStorage.setItem("user_id", data.user_id);
+          this.fetchMenuItems(data.role_code);
           this.menuUpdated.emit(this.menuItems);
           this.isLoggedIn = true;
           this.roleCode = data.role_code;
@@ -57,5 +48,16 @@ export class AuthService {
 
   logout() {
     this.isLoggedIn = false;
+  }
+
+  fetchMenuItems(roleCode: string) {
+    if (roleCode == 'operator') {
+      this.menuItems = appGlobals.menuItemsOperator;
+    } else if (roleCode == 'instructor') {
+      this.menuItems = appGlobals.menuItemsInstructor;
+    } else if (roleCode == 'client') {
+      this.menuItems = appGlobals.menuItemsClient;
+    }
+    this.activeItem = this.menuItems[0];
   }
 }

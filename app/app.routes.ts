@@ -10,11 +10,12 @@ import {CourtAddComponent} from "./courts/court-add.component";
 import {LoginComponent} from "./login/login.component";
 import {LogoutComponent} from "./login/logout.component";
 import {AuthGuardService} from "./auth-guard.service";
+import {CalendarInstructorComponent} from "./calendar/calendar_instructor.component";
 
 export const appRoutes = [
   {
     path: '',
-    redirectTo: '/calendar_instructor',
+    redirectTo: '/calendar',
     pathMatch: 'full'
   },
   {
@@ -43,7 +44,7 @@ export const appRoutes = [
   },
   {
     path: 'calendar_instructor',
-    component: CalendarComponent,
+    component: CalendarInstructorComponent,
     canActivate: [AuthGuardService],
     data: {roles: ['operator']}
   },
