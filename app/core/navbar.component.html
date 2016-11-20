@@ -6,21 +6,11 @@
         display: none !important;
       }
     </style>
-    <!--<ul class="nav nav-pills pull-left">-->
-
-    <!--&lt;!&ndash;<li [hidden]="!getToken() || getTokenRole()!='operator'" role="presentation" routerLinkActive="active" [routerLink]="['/calendar']"><a href="#">Календарь</a></li>&ndash;&gt;-->
-    <!--&lt;!&ndash;<li [hidden]="!getToken() || getTokenRole()!='instructor'" role="presentation" routerLinkActive="active" [routerLink]="['/calendar_instructor']"><a href="#">Календарь</a></li>&ndash;&gt;-->
-    <!--&lt;!&ndash;<li [hidden]="!getToken() || getTokenRole()!='operator'" role="presentation" routerLinkActive="active" [routerLink]="['/instructors']"><a href="#">Инструкторы</a></li>&ndash;&gt;-->
-    <!--&lt;!&ndash;<li [hidden]="!getToken() || getTokenRole()!='operator'" role="presentation" routerLinkActive="active" [routerLink]="['/courts']"><a href="#">Корты</a></li>&ndash;&gt;-->
-    <!--&lt;!&ndash;<li role="presentation" routerLinkActive="active" [routerLink]="['/courts']"><a href="#">Корты</a></li>&ndash;&gt;-->
-    <!--&lt;!&ndash;<li [hidden]="!getToken()" role="presentation" routerLinkActive="active" [routerLink]="['/logout']"><a href="#">Выход</a></li>&ndash;&gt;-->
-    <!---->
-    <!--</ul>-->
     <div class="col-sm-10">
       <p-tabMenu [model]="menuItems" [activeItem]="activeItem"></p-tabMenu>
     </div>
     <div class="col-sm-2">
-      Вы вошли как
+      Вы вошли как <br><b>{{getTokenRole()}}</b>
     </div>
 
   </nav>

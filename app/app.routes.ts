@@ -10,7 +10,7 @@ import {CourtAddComponent} from "./courts/court-add.component";
 import {LoginComponent} from "./login/login.component";
 import {LogoutComponent} from "./login/logout.component";
 import {AuthGuardService} from "./auth-guard.service";
-import {CalendarInstructorComponent} from "./calendar/calendar_instructor.component";
+import {CalendarInstructorComponent} from "./calendar_instructor/calendar_instructor.component";
 
 export const appRoutes = [
   {

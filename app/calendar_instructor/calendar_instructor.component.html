@@ -7,6 +7,7 @@
   [events]="fcEvents"
   [resources]="fcResources"
   locale="ru"
+  [nowIndicator]="true"
   defaultView="agendaDay"
   slotLabelFormat="HH:mm"
   resourceAreaWidth="120"
@@ -24,24 +25,10 @@
   <form [formGroup]="eventForm" (ngSubmit)="saveEvent()">
     <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
       <div class="ui-grid-row">
-        <div class="ui-grid-col-4"><label for="title">Корт</label></div>
-        <div class="ui-grid-col-8">
-          <p-dropdown [options]="courtsDialog" id="court" formControlName="court" [style]="{'width':'250px'}"
-                      [(ngModel)]="event.court_id"></p-dropdown>
-        </div>
-      </div>
-      <div class="ui-grid-row">
         <div class="ui-grid-col-4"><label for="title">Текст</label></div>
         <div class="ui-grid-col-8">
           <input pInputText id="title" formControlName="title" required [(ngModel)]="event.title"/>
           <div class="alert alert-danger" style="height: 50px;" *ngIf="!eventForm.controls['title'].valid">Введите текст</div>
-        </div>
-      </div>
-      <div class="ui-grid-row">
-        <div class="ui-grid-col-4"><label for="title">Инструктор</label></div>
-        <div class="ui-grid-col-8">
-          <p-dropdown [options]="instructorsDialog" id="instructorSelect" [style]="{'width':'250px'}"
-                      [(ngModel)]="event.instructor_id" formControlName="instructorDialog"></p-dropdown>
         </div>
       </div>
       <div class="ui-grid-row">

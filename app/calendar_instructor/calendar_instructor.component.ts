@@ -1,7 +1,7 @@
 import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import {SelectItem} from 'primeng/primeng';
 import {CalendarInstructorService} from "./calendar_instructor.service";
-import {CalendarEvent, EventResource} from "./event.class";
+import {CalendarEvent, EventResource} from "../calendar/event.class";
 import {Court} from "../courts/court.class";
 import {FormGroup, Validators, FormBuilder} from "@angular/forms";
 import {Instructor} from "../instructors/instructor.class";
@@ -45,7 +45,9 @@ export class CalendarInstructorComponent implements OnInit {
   courtTypes: SelectItem[] = [];
   selectedCourtType: number = 0;
 
-  constructor(private cd: ChangeDetectorRef, private calendarInstructorService: CalendarInstructorService, private formBuilder: FormBuilder) {
+  constructor(private cd: ChangeDetectorRef,
+              private calendarInstructorService: CalendarInstructorService,
+              private formBuilder: FormBuilder) {
   }
 
   // handle new Event
@@ -125,17 +127,18 @@ export class CalendarInstructorComponent implements OnInit {
     var start = moment(this.event.start).format('YYYY-MM-DD HH:mm');
 
     var end = moment(this.event.end).format('YYYY-MM-DD HH:mm');
+    calEvent.instructor_id = parseInt(localStorage.getItem("instructor_id"));
+    calEvent.court_id = -1;
     if (end > start && dateNow < start) {
       //update
       if (this.event.id !== -1) {
         calEvent.id = parseInt(this.event.id.toString());
-        calEvent.court_id = parseInt(this.event.court_id.toString());
-        calEvent.instructor_id = this.event.instructor_id == null ? -1 : parseInt(this.event.instructor_id.toString());
         this.calendarInstructorService.editEvent(calEvent);
         this.clearEvent();
       }
       //new
       else {
+
         this.calendarInstructorService.addEvent(calEvent);
         this.clearEvent();
       }
@@ -195,16 +198,11 @@ export class CalendarInstructorComponent implements OnInit {
 
     this.eventForm = this.formBuilder.group({
       title: ['', Validators.required],
-      court: ['', Validators.required],
       start: ['', Validators.required],
       end: ['', Validators.required],
-      instructorDialog: []
     });
 
-    this.calendarInstructorService.fetchInstructors();
-    this.calendarInstructorService.fetchCourts();
-
-    this.calendarInstructorService.fetchEventsByInstructorId(8, 0, 0);
+    this.calendarInstructorService.fetchEventsByInstructorId(localStorage.getItem("instructor_id"));
 
     this.calendarInstructorService.eventsUpdated.subscribe(
       (events: CalendarEvent[]) => {

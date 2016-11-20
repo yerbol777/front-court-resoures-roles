@@ -1,6 +1,6 @@
 import {Http, Response, Headers} from "@angular/http";
 import {Injectable, EventEmitter} from "@angular/core";
-import {CalendarEvent, EventResource} from "./event.class";
+import {CalendarEvent, EventResource} from "../calendar/event.class";
 import {Court} from "../courts/court.class";
 import {Instructor} from "../instructors/instructor.class";
 import appGlobals = require('../app.global');
@@ -26,70 +26,8 @@ export class CalendarInstructorService {
   constructor(private http: Http) {
   }
 
-  fetchCourts() {
-    return this.http.get(appGlobals.rest_server + 'courts?court_type_id=0&nocache=' + new Date().getTime(), {headers: this.headers})
-      .map((response: Response) => response.json())
-      .subscribe(
-        (data: Court[]) => {
-          this.courts = data;
-          this.courtsUpdated.emit(this.courts);
-        }
-      );
-  }
-
-  fetchCourtsByCourtTypeId(courtTypeId: number) {
-    return this.http.get(appGlobals.rest_server + 'courts?court_type_id=' + courtTypeId + '&nocache=' + new Date().getTime(), {headers: this.headers})
-      .map((response: Response) => response.json())
-      .subscribe(
-        (data: Court[]) => {
-          this.courts = data;
-          this.courtsUpdated.emit(this.courts);
-        }
-      );
-  }
-
-  fetchInstructors() {
-    return this.http.get(appGlobals.rest_server + 'instructors?nocache=' + new Date().getTime(), {headers: this.headers})
-      .map((response: Response) => response.json())
-      .subscribe(
-        (data: Instructor[]) => {
-          this.instructors = data;
-          this.instructorsUpdated.emit(this.instructors);
-        }
-      );
-  }
-
-  getEvents() {
-    return this.events;
-  }
-
-  getEventsByCourtId(tabCourtId: number) {
-    for (var event of this.events) {
-      if (event.tab_court_id === tabCourtId) {
-        return event;
-      }
-    }
-    return null;
-  }
-
-  fetchEventsByCourtId(courtId: number, courtTypeId: number) {
-    return this.http.get(appGlobals.rest_server + 'events?court_id=' + courtId + '&court_type_id=' + courtTypeId + '&nocache=' + new Date().getTime(), {headers: this.headers})
-      .map((response: Response) => response.json())
-      .subscribe(
-        (data: CalendarEvent[]) => {
-          if (data != null && data.length > 0) {
-            this.events = data;
-            this.eventsUpdated.emit(this.events);
-          }
-          else {
-            this.eventsUpdated.emit(this.events);
-          }
-        }
-      );
-  }
-
-  fetchEventsByInstructorId(instructorId: number, courtId: number, courtTypeId: number) {
-    return this.http.get(appGlobals.rest_server + 'events?instructor_id=' + instructorId + '&court_id=' + courtId + '&court_type_id=' + courtTypeId + '&nocache=' + new Date().getTime(), {headers: this.headers})
+  fetchEventsByInstructorId(instructorId: number) {
+    return this.http.get(appGlobals.rest_server + 'eventsInstructor?instructor_id=' + instructorId + '&nocache=' + new Date().getTime(), {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: CalendarEvent[]) => {
@@ -161,14 +99,4 @@ export class CalendarInstructorService {
     });
   }
 
-  fetchCourtTypes() {
-    return this.http.get(appGlobals.rest_server + 'courtTypes?nocache=' + new Date().getTime(), {headers: this.headers})
-      .map((response: Response) => response.json())
-      .subscribe(
-        (data: CourtType[]) => {
-          this.courtTypes = data;
-          this.courtTypesUpdated.emit(this.courtTypes);
-        }
-      );
-  }
 }
