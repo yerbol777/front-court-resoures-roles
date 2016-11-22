@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
+import {AuthService} from "./auth.service";
 
 @Component({
   moduleId: module.id,
@@ -17,7 +18,8 @@ export class LogoutComponent implements OnInit {
     localStorage.removeItem('role_code');
     localStorage.removeItem('user_id');
     localStorage.removeItem('instructor_id');
-    this.router.navigate(['login']);
+    //this.router.navigate(['login']);
+    window.location.replace('/login');
   }
 
 }

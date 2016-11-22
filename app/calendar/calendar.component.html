@@ -16,7 +16,6 @@
     <input type="hidden" name="withCourtIdHidden" value="{{co.value}}">
     <input type="hidden" name="withCourtNameHidden" value="{{co.label}}">
   </p-tabPanel>
-
   <ds-scheduler
     [editable]="false"
     [events]="fcEvents"
@@ -54,7 +53,8 @@
           <div class="alert alert-danger" style="height: 50px;" *ngIf="!eventForm.controls['title'].valid">Введите текст</div>
         </div>
       </div>
-      <div class="ui-grid-row">
+
+      <div class="ui-grid-row" *ngIf="!isInstructor">
         <div class="ui-grid-col-4"><label for="title">Инструктор</label></div>
         <div class="ui-grid-col-8">
           <p-dropdown [options]="instructorsDialog" id="instructorSelect" [style]="{'width':'250px'}"

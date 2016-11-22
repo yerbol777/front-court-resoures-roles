@@ -15,8 +15,8 @@ export class AuthService {
   public roleCode = null;
   // store the URL so we can redirect after logging in
   redirectUrl = '/';
-  public menuItems: MenuItem[];
-  public activeItem: MenuItem;
+  public menuItems: MenuItem[] = [];
+  public activeItem: MenuItem = null;
   menuUpdated = new EventEmitter<MenuItem[]>();
 
   constructor(private http: Http,

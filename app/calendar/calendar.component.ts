@@ -45,8 +45,12 @@ export class CalendarComponent implements OnInit {
   locale: string;
   courtTypes: SelectItem[] = [];
   selectedCourtType: number = 0;
+  isInstructor:boolean = false;
 
   constructor(private cd: ChangeDetectorRef, private calendarService: CalendarService, private formBuilder: FormBuilder) {
+    if (localStorage.getItem("role_code")=='instructor'){
+      this.isInstructor = true;
+    }
   }
 
   // handle new Event
@@ -211,6 +215,9 @@ export class CalendarComponent implements OnInit {
     );
     let dateNow = moment(new Date()).format('YYYY-MM-DD HH:mm');
     var start = moment(this.event.start).format('YYYY-MM-DD HH:mm');
+    if (localStorage.getItem('role_code') == 'instructor') {
+      calEvent.instructor_id = localStorage.getItem('instructor_id');
+    }
 
     var end = moment(this.event.end).format('YYYY-MM-DD HH:mm');
     if (end > start && dateNow < start) {
@@ -313,13 +320,11 @@ export class CalendarComponent implements OnInit {
         this.fcEvents = [];
         for (var ev of this.events) {
           this.fcEvents.push(this.toFCEvent(ev));
-          console.log('role_code' + localStorage.getItem("role_code"));
           if (localStorage.getItem("role_code") == 'instructor' && ev.instructor_id != localStorage.getItem("instructor_id")) {
             ev.color = 'gray';
           } else {
             ev.color = ev.color;
           }
-          console.log('color: ' + ev.id + '-' +  ev.color);
         }
         if (this.events.length === 0) {
           this.calendarService.fetchEventsByCourtId(this.selectedCourt.id, this.selectedCourtType);
@@ -355,16 +360,14 @@ export class CalendarComponent implements OnInit {
         this.events = events;
         this.fcEvents = [];
         if (this.events != null && this.events.length > 0) {
-          console.log('role_code' + localStorage.getItem("role_code"));
           for (var ev of this.events) {
-            this.fcEvents.push(this.toFCEvent(ev));
             if (localStorage.getItem("role_code") == 'instructor' && ev.instructor_id != localStorage.getItem("instructor_id")) {
               ev.color = 'gray';
             }
             else {
               ev.color = ev.color;
             }
-            console.log('color: ' + ev.id + '-' +  ev.color);
+            this.fcEvents.push(this.toFCEvent(ev));
           }
         } else {
           this.fcEvents.push(null);

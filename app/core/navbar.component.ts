@@ -12,34 +12,33 @@ import appGlobals = require('../app.global');
 
 export class NavbarComponent implements OnInit {
   login: Login;
-  private menuItems: MenuItem[];
-  private activeItem: MenuItem;
-
+  private menuItems: MenuItem[] = [];
+  private activeItem: MenuItem = null;
 
   constructor(public authService: AuthService) {
-
-  }
-
-  ngOnInit() {
     let role_code = localStorage.getItem("role_code");
     if (role_code != null) {
       if (role_code == 'operator') {
         this.menuItems = appGlobals.menuItemsOperator;
       } else if (role_code == 'instructor') {
         this.menuItems = appGlobals.menuItemsInstructor;
-      }else if (role_code == 'client') {
+      } else if (role_code == 'client') {
         this.menuItems = appGlobals.menuItemsClient;
       }
       this.activeItem = this.menuItems[0];
     } else {
       this.authService.menuUpdated.subscribe(
         (menus: MenuItem[])=> {
-          console.log('menus' + menus);
           this.menuItems = menus;
           this.activeItem = this.menuItems[0];
         }
       );
     }
+    console.log('menuItems:' + this.menuItems.length);
+  }
+
+  ngOnInit() {
+
   }
 
   getToken() {

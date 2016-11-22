@@ -138,7 +138,6 @@ export class CalendarInstructorComponent implements OnInit {
       }
       //new
       else {
-
         this.calendarInstructorService.addEvent(calEvent);
         this.clearEvent();
       }
@@ -214,6 +213,9 @@ export class CalendarInstructorComponent implements OnInit {
           for (var ev of this.events) {
             if (ev.instructor_id != localStorage.getItem("instructor_id")) {
               ev.color = "gray";
+            }
+            else if (ev.court_id == null) {
+              ev.color = "#b3b3ff";
             }
             this.fcEvents.push(this.toFCEvent(ev));
           }

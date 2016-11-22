@@ -6,7 +6,9 @@ import {Component} from '@angular/core';
     templateUrl: 'app.component.html'
 })
 export class AppComponent {
-    getToken() {
+
+  getToken() {
         return localStorage.getItem('id_token');
     }
+
 }

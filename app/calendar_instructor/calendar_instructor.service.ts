@@ -47,6 +47,7 @@ export class CalendarInstructorService {
       .subscribe((data) => {
           event.id = data[0].id;
           event.resourceId = data[0].resourceId;
+          event.color = "#b3b3ff";
           this.events.push(event);
           this.eventsUpdated.emit(this.events);
         },
