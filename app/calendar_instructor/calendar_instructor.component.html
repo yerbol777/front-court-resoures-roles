@@ -1,29 +1,50 @@
 <div class="page-header">
-  <h2>Календарь Инструктура</h2>
+  <h1>Календарь</h1>
 </div>
+<!--<p-dropdown [options]="instructors" [style]="{'width':'250px'}" [(ngModel)]="selectedInstructor"-->
+            <!--(onChange)="onInstructorsDropdownChange()"></p-dropdown>-->
+<!--<p-dropdown [options]="courtTypes" [style]="{'width':'150px'}" [(ngModel)]="selectedCourtType"-->
+            <!--(onChange)="onCourtTypesDropdownChange()"></p-dropdown>-->
+<p-tabView (onChange)="onCourtsTabViewChange($event)">
+  <p-tabPanel header="Все корты">
+    <input type="hidden" name="withCourtIdHidden" value="-1">
+    <input type="hidden" name="withCourtNameHidden" value="-1">
+  </p-tabPanel>
+  <p-tabPanel *ngFor="let co of courts" [header]="co.label">
+    <!--Court: {{co.value}} / {{co.label}}-->
+    <input type="hidden" name="withCourtIdHidden" value="{{co.value}}">
+    <input type="hidden" name="withCourtNameHidden" value="{{co.label}}">
+  </p-tabPanel>
+  <ds-scheduler
+    [editable]="false"
+    [events]="fcEvents"
+    [resources]="fcResources"
+    [nowIndicator]="true"
+    locale="ru"
+    defaultView="agendaDay"
+    slotLabelFormat="HH:mm"
+    resourceAreaWidth="120"
+    resourceLabelText="&nbsp;"
+    titleFormat="YYYY-MM-DD dddd"
+    (onEventClick)="handleEventClick($event)"
+    (onDayClick)="handleDayClick($event)"
+    (onEventDrop)="handleEventDrop($event)"
+    (onEventResize)="handleEventResize($event)"
+  ></ds-scheduler>
 
-
-<ds-scheduler
-  [events]="fcEvents"
-  [resources]="fcResources"
-  locale="ru"
-  [nowIndicator]="true"
-  defaultView="agendaDay"
-  slotLabelFormat="HH:mm"
-  resourceAreaWidth="120"
-  resourceLabelText="&nbsp;"
-  titleFormat="YYYY-MM-DD dddd"
-  (onEventClick)="handleEventClick($event)"
-  (onDayClick)="handleDayClick($event)"
-  (onEventDrop)="handleEventDrop($event)"
-  (onEventResize)="handleEventResize($event)"
-></ds-scheduler>
-
+</p-tabView>
 
 <p-dialog header="Мероприятие" [(visible)]="dialogVisible" [width]="450" [responsive]="true" showEffect="fade"
           [modal]="false">
   <form [formGroup]="eventForm" (ngSubmit)="saveEvent()">
     <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-4"><label for="title">Корт</label></div>
+        <div class="ui-grid-col-8">
+          <p-dropdown [options]="courtsDialog" id="court" formControlName="court" [style]="{'width':'250px'}"
+                      [(ngModel)]="event.court_id"></p-dropdown>
+        </div>
+      </div>
       <div class="ui-grid-row">
         <div class="ui-grid-col-4"><label for="title">Текст</label></div>
         <div class="ui-grid-col-8">
@@ -31,6 +52,7 @@
           <div class="alert alert-danger" style="height: 50px;" *ngIf="!eventForm.controls['title'].valid">Введите текст</div>
         </div>
       </div>
+
       <div class="ui-grid-row">
         <div class="ui-grid-col-4"><label for="start">Начало</label></div>
         <div class="ui-grid-col-8">

@@ -5,6 +5,7 @@ import {CalendarEvent, EventResource} from "../calendar/event.class";
 import {Court} from "../courts/court.class";
 import {FormGroup, Validators, FormBuilder} from "@angular/forms";
 import {Instructor} from "../instructors/instructor.class";
+import {CalendarService} from "../calendar/calendar.service";
 ///<reference path="typings/moment/moment.d.ts" />
 var moment = require('moment');
 
@@ -20,6 +21,7 @@ export class CalendarInstructorComponent implements OnInit {
   fcEvents: any[] = [];
   fcResources: any[] = [];
   resources: any[] = [];  // resources clone
+  myCalendar: EventResource = null;
   header: any;
   event = {
     id: -1,
@@ -47,8 +49,32 @@ export class CalendarInstructorComponent implements OnInit {
 
   constructor(private cd: ChangeDetectorRef,
               private calendarInstructorService: CalendarInstructorService,
+              private calendarService: CalendarService,
               private formBuilder: FormBuilder) {
   }
+
+  onCourtsTabViewChange(e) {
+    var courtId = <HTMLInputElement>document.getElementsByName('withCourtIdHidden').item(e.index);
+    var courtName = <HTMLInputElement>document.getElementsByName('withCourtNameHidden').item(e.index);
+    this.selectedCourt.id = parseInt(courtId.value);
+    this.event.tab_court_id = this.selectedCourt.id;
+    if (parseInt(courtId.value) != -1) {
+      this.courtsDialog = [({label: courtName.value, value: courtId.value})];
+      this.event.court_id = parseInt(courtId.value);
+      this.fcResources = [
+        {
+          id: courtId.value,
+          title: courtName.value
+        }];
+    }
+    else {
+      this.courtsDialog.push({label: '-Выберите корт-', value: -1});
+      this.courtsDialog = this.courts;
+      this.fcResources = this.resources;
+    }
+    this.calendarService.fetchEventsByCourtId(this.selectedCourt.id, this.selectedCourtType);
+  }
+
 
   // handle new Event
   handleDayClick(event: any) {
@@ -128,7 +154,10 @@ export class CalendarInstructorComponent implements OnInit {
 
     var end = moment(this.event.end).format('YYYY-MM-DD HH:mm');
     calEvent.instructor_id = parseInt(localStorage.getItem("instructor_id"));
-    calEvent.court_id = -1;
+    //calEvent.court_id = -2;
+    if (calEvent.court_id == null) {
+      calEvent.court_id = -2;
+    }
     if (end > start && dateNow < start) {
       //update
       if (this.event.id !== -1) {
@@ -197,9 +226,58 @@ export class CalendarInstructorComponent implements OnInit {
 
     this.eventForm = this.formBuilder.group({
       title: ['', Validators.required],
+      court: ['', Validators.required],
       start: ['', Validators.required],
       end: ['', Validators.required],
+      instructorDialog: []
     });
+    this.calendarService.fetchCourts();
+
+    this.calendarService.courtsUpdated.subscribe(
+      (courts: Court[]) => {
+        this.courtsDialog = [];
+        this.resources = [];
+        this.fcResources = [];
+        this.fcEvents = [];
+
+        this.myCalendar =
+        {
+          id: -2,
+          title: 'Мой календарь'
+        };
+
+        this.courts.push({label: "Мой календарь", value: -2});
+        this.courtsDialog.push({label: "Мой календарь", value: -2});
+        this.resources.push(this.toFCResources(this.myCalendar));
+        this.fcResources.push(this.toFCResources(this.myCalendar));
+
+        for (var c of courts) {
+          this.courts.push({label: c.name, value: c.id});
+          this.resources.push(this.toFCResources(c));
+          this.fcResources.push(this.toFCResources(c));
+          this.courtsDialog.push({label: c.name, value: c.id});
+        }
+        this.selectedCourt = new Court(0, 'Все', '', 0, '');
+        this.event.tab_court_id = this.selectedCourt.id;
+
+        this.events = [];
+        this.events = this.calendarService.getEvents();
+        this.fcEvents = [];
+        for (var ev of this.events) {
+          this.fcEvents.push(this.toFCEvent(ev));
+          if (localStorage.getItem("role_code") == 'instructor' && ev.instructor_id != localStorage.getItem("instructor_id")) {
+            ev.color = 'gray';
+          } else if (ev.court_id == -2) {
+            ev.color = "#b3b3ff";
+          } else {
+            ev.color = ev.color;
+          }
+        }
+        if (this.events.length === 0) {
+          this.calendarService.fetchEventsByCourtId(this.selectedCourt.id, this.selectedCourtType);
+        }
+      }
+    );
 
     this.calendarInstructorService.fetchEventsByInstructorId(localStorage.getItem("instructor_id"));
 
@@ -214,8 +292,33 @@ export class CalendarInstructorComponent implements OnInit {
             if (ev.instructor_id != localStorage.getItem("instructor_id")) {
               ev.color = "gray";
             }
-            else if (ev.court_id == null) {
+            else if (ev.court_id == -2) {
               ev.color = "#b3b3ff";
+            } else {
+              ev.color = ev.color;
+            }
+
+            this.fcEvents.push(this.toFCEvent(ev));
+          }
+        } else {
+          this.fcEvents.push(null);
+        }
+      }
+    );
+
+    this.calendarService.eventsUpdated.subscribe(
+      (events: CalendarEvent[]) => {
+        this.events = events;
+        this.fcEvents = [];
+        if (this.events != null && this.events.length > 0) {
+          for (var ev of this.events) {
+            if (localStorage.getItem("role_code") == 'instructor' && ev.instructor_id != localStorage.getItem("instructor_id")) {
+              ev.color = 'gray';
+            } else if (ev.court_id == -2) {
+              ev.color = "#b3b3ff";
+            }
+            else {
+              ev.color = ev.color;
             }
             this.fcEvents.push(this.toFCEvent(ev));
           }
@@ -260,6 +363,13 @@ export class CalendarInstructorComponent implements OnInit {
 
     this.allDaySlot = false;
     this.locale = 'ru';
+  }
+
+  toFCResources(resource: EventResource) {
+    return {
+      "id": `${ resource.id }`,
+      "title": `${ resource.title }`
+    };
   }
 
   toFCEvent(event: CalendarEvent) {

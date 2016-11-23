@@ -12,8 +12,8 @@ import appGlobals = require('../app.global');
 
 export class NavbarComponent implements OnInit {
   login: Login;
-  private menuItems: MenuItem[] = [];
-  private activeItem: MenuItem = null;
+  public menuItems: MenuItem[] = [];
+  public activeItem: MenuItem = null;
 
   constructor(public authService: AuthService) {
     let role_code = localStorage.getItem("role_code");

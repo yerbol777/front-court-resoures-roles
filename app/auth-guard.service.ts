@@ -18,7 +18,7 @@ export class AuthGuardService implements CanActivate {
   checkLogin(url: string): boolean {
     if (this.authService.isLoggedIn) {
       if (this.authService.roleCode == 'instructor') {
-        this.authService.redirectUrl = 'calendar';
+        this.authService.redirectUrl = 'calendar_instructor';
       } else if (this.authService.roleCode == 'operator') {
         this.authService.redirectUrl = 'calendar';
       }
