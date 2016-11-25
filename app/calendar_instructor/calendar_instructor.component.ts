@@ -281,12 +281,13 @@ export class CalendarInstructorComponent implements OnInit {
           }
         }
         if (this.events.length === 0) {
-          this.calendarService.fetchEventsByCourtId(this.selectedCourt.id, this.selectedCourtType);
+
         }
       }
     );
 
-    this.calendarInstructorService.fetchEventsByInstructorId(localStorage.getItem("instructor_id"));
+    this.calendarInstructorService.fetchEventsByInstructorId(0, 0,
+      localStorage.getItem("instructor_id") != null ? parseInt(localStorage.getItem("instructor_id")) : 0);
 
     this.calendarInstructorService.eventsUpdated.subscribe(
       (events: CalendarEvent[]) => {

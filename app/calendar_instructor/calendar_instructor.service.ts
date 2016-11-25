@@ -26,8 +26,8 @@ export class CalendarInstructorService {
   constructor(private http: Http) {
   }
 
-  fetchEventsByInstructorId(instructorId: number) {
-    return this.http.get(appGlobals.rest_server + 'eventsInstructor?instructor_id=' + instructorId + '&nocache=' + new Date().getTime(), {headers: this.headers})
+  fetchEventsByInstructorId(courtId: number, courtTypeId: number, instructorId: number) {
+    return this.http.get(appGlobals.rest_server + 'eventsInstructor?court_id=' + courtId + '&court_type_id=' + courtTypeId + '&instructor_id=' + instructorId + '&nocache=' + new Date().getTime(), {headers: this.headers})
       .map((response: Response) => response.json())
       .subscribe(
         (data: CalendarEvent[]) => {

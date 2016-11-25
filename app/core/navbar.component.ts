@@ -16,25 +16,7 @@ export class NavbarComponent implements OnInit {
   public activeItem: MenuItem = null;
 
   constructor(public authService: AuthService) {
-    let role_code = localStorage.getItem("role_code");
-    if (role_code != null) {
-      if (role_code == 'operator') {
-        this.menuItems = appGlobals.menuItemsOperator;
-      } else if (role_code == 'instructor') {
-        this.menuItems = appGlobals.menuItemsInstructor;
-      } else if (role_code == 'client') {
-        this.menuItems = appGlobals.menuItemsClient;
-      }
-      this.activeItem = this.menuItems[0];
-    } else {
-      this.authService.menuUpdated.subscribe(
-        (menus: MenuItem[])=> {
-          this.menuItems = menus;
-          this.activeItem = this.menuItems[0];
-        }
-      );
-    }
-    console.log('menuItems NavbarComponent:' + this.menuItems.length);
+
   }
 
   ngOnInit() {
@@ -48,14 +30,16 @@ export class NavbarComponent implements OnInit {
         this.menuItems = appGlobals.menuItemsClient;
       }
       this.activeItem = this.menuItems[0];
-    } else {
-      this.authService.menuUpdated.subscribe(
-        (menus: MenuItem[])=> {
-          this.menuItems = menus;
-          this.activeItem = this.menuItems[0];
-        }
-      );
     }
+
+    this.authService.menuUpdated.subscribe(
+      (menus: MenuItem[])=> {
+        this.menuItems = menus;
+        this.activeItem = this.menuItems[0];
+      }
+    );
+
+    this.activeItem = this.menuItems[0];
     console.log('menuItems NavbarComponent:' + this.menuItems.length);
 
   }
