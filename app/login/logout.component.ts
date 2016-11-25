@@ -18,8 +18,8 @@ export class LogoutComponent implements OnInit {
     localStorage.removeItem('role_code');
     localStorage.removeItem('user_id');
     localStorage.removeItem('instructor_id');
-    //this.router.navigate(['login']);
-    window.location.replace('/login');
+    this.router.navigate(['login']);
+    //window.location.replace('/login');
   }
 
 }

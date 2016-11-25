@@ -15,7 +15,7 @@ import {CalendarInstructorComponent} from "./calendar_instructor/calendar_instru
 export const appRoutes = [
   {
     path: '',
-    redirectTo: '/calendar_instructor',
+    redirectTo:  '/calendar',
     pathMatch: 'full'
   },
   {

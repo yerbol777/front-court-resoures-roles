@@ -14,7 +14,7 @@ export class AuthService {
   public isLoggedIn = false;
   public roleCode = null;
   // store the URL so we can redirect after logging in
-  redirectUrl = '/';
+  redirectUrl = '/calendar';
   public menuItems: MenuItem[] = [];
   public activeItem: MenuItem = null;
   menuUpdated = new EventEmitter<MenuItem[]>();
@@ -35,8 +35,10 @@ export class AuthService {
           localStorage.setItem("role_code", data.role_code);
           localStorage.setItem("instructor_id", data.instructor_id);
           localStorage.setItem("user_id", data.user_id);
+          this.menuItems = [];
           this.fetchMenuItems(data.role_code);
           this.menuUpdated.emit(this.menuItems);
+          console.log('menuItems AuthService:' + this.menuItems.length);
           this.isLoggedIn = true;
           this.roleCode = data.role_code;
           this.router.navigate([this.redirectUrl]);

@@ -6,6 +6,7 @@ import {Court} from "../courts/court.class";
 import {Instructor} from "../instructors/instructor.class";
 import {CourtType} from "../courts/court-type.class";
 import {FormGroup, Validators, FormBuilder} from "@angular/forms";
+import {Router} from "@angular/router";
 ///<reference path="typings/moment/moment.d.ts" />
 var moment = require('moment');
 
@@ -45,11 +46,17 @@ export class CalendarComponent implements OnInit {
   locale: string;
   courtTypes: SelectItem[] = [];
   selectedCourtType: number = 0;
-  isInstructor:boolean = false;
+  isInstructor: boolean = false;
+  router: Router;
 
-  constructor(private cd: ChangeDetectorRef, private calendarService: CalendarService, private formBuilder: FormBuilder) {
-    if (localStorage.getItem("role_code")=='instructor'){
+  constructor(private cd: ChangeDetectorRef,
+              private calendarService: CalendarService,
+              private formBuilder: FormBuilder,
+              _router: Router) {
+    this.router = _router;
+    if (localStorage.getItem("role_code") == 'instructor') {
       this.isInstructor = true;
+      this.router.navigate(['/calendar_instructor']);
     }
   }
 
@@ -78,7 +85,7 @@ export class CalendarComponent implements OnInit {
 
   onCourtsDropdownChange() {
     this.event.tab_court_id = this.selectedCourt.id;
-    if (this.selectedInstructor.id === -1) {
+    if (this.selectedInstructor.id === -1 && this.selectedInstructor.id != null) {
       this.calendarService.fetchEventsByCourtId(this.selectedCourt.id, this.selectedCourtType);
     } else {
       this.calendarService.fetchEventsByInstructorId(this.selectedInstructor.id, this.selectedCourt.id, this.selectedCourtType);
@@ -288,6 +295,7 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit() {
 
+
     this.eventForm = this.formBuilder.group({
       title: ['', Validators.required],
       court: ['', Validators.required],
@@ -306,6 +314,7 @@ export class CalendarComponent implements OnInit {
         this.resources = [];
         this.fcResources = [];
         this.fcEvents = [];
+        this.courts = [];
 
         for (var c of courts) {
           this.courts.push({label: c.name, value: c.id});

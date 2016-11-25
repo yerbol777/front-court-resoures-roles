@@ -6,6 +6,7 @@ import {Court} from "../courts/court.class";
 import {FormGroup, Validators, FormBuilder} from "@angular/forms";
 import {Instructor} from "../instructors/instructor.class";
 import {CalendarService} from "../calendar/calendar.service";
+import {Router} from "@angular/router";
 ///<reference path="typings/moment/moment.d.ts" />
 var moment = require('moment');
 
@@ -46,11 +47,16 @@ export class CalendarInstructorComponent implements OnInit {
   locale: string;
   courtTypes: SelectItem[] = [];
   selectedCourtType: number = 0;
+  router: Router;
 
   constructor(private cd: ChangeDetectorRef,
               private calendarInstructorService: CalendarInstructorService,
               private calendarService: CalendarService,
-              private formBuilder: FormBuilder) {
+              private formBuilder: FormBuilder, _router: Router) {
+    this.router = _router;
+    if (localStorage.getItem("role_code") == 'operator') {
+      this.router.navigate(['/calendar']);
+    }
   }
 
   onCourtsTabViewChange(e) {
@@ -239,6 +245,7 @@ export class CalendarInstructorComponent implements OnInit {
         this.resources = [];
         this.fcResources = [];
         this.fcEvents = [];
+        this.courts = [];
 
         this.myCalendar =
         {
