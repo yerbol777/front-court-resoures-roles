@@ -165,10 +165,13 @@ export class CalendarComponent implements OnInit {
 
     let dateNow = moment(new Date()).format('YYYY-MM-DD HH:mm');
     if (localStorage.getItem('role_code') == 'instructor'
-      && e.calEvent.instructor_id == localStorage.getItem('instructor_id')) {
+      && e.calEvent.instructor_id == localStorage.getItem('instructor_id')
+    ) {
       this.dialogVisible = true;
     }
-    else if (dateNow < startDate && localStorage.getItem('role_code') == 'operator') {
+    else if (dateNow < startDate && localStorage.getItem('role_code') == 'operator'
+      && e.calEvent.color != 'maroon') {
+      console.log('this.event.color:' + e.calEvent.color);
       this.dialogVisible = true;
     }
     else {

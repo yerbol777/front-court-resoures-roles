@@ -121,11 +121,13 @@ export class CalendarInstructorComponent implements OnInit {
     }
 
     let dateNow = moment(new Date()).format('YYYY-MM-DD HH:mm');
-    if (dateNow < startDate) {
+    if (dateNow < startDate
+      && this.event.instructor_id == localStorage.getItem('instructor_id')
+      && this.event.color != 'maroon') {
       this.dialogVisible = true;
     }
     else {
-      alert("Hе возможно редактировать запись старой даты");
+      alert("Hе возможно редактировать запись");
     }
   }
 
@@ -161,7 +163,7 @@ export class CalendarInstructorComponent implements OnInit {
     var end = moment(this.event.end).format('YYYY-MM-DD HH:mm');
     calEvent.instructor_id = parseInt(localStorage.getItem("instructor_id"));
     //calEvent.court_id = -2;
-    if (calEvent.court_id == null) {
+    if (calEvent.court_id == null || calEvent.court_id == -1) {
       calEvent.court_id = -2;
     }
     if (end > start && dateNow < start) {
